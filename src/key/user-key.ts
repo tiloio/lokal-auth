@@ -1,8 +1,20 @@
+import { assertEquals } from "@std/assert/equals";
 import { createIV, createSalt } from "./key-utils.ts";
-import type { DerivedKeyJson, DerivedKeyOptions } from "./types.ts";
+import type {
+  JsonLocalAuthKey,
+  DerivedKeyOptions,
+  LokalAuthKey,
+  Encrypted,
+} from "./types.ts";
 
-export class DerivedKey {
+export class UserKey implements LokalAuthKey {
   private static ENCRYPTION_ALGORITHM = "AES-GCM";
+  private static KEY_OPERATIONS = [
+    "encrypt",
+    "decrypt",
+    "wrapKey",
+    "unwrapKey",
+  ] as const;
 
   private constructor(
     private key: CryptoKey,
@@ -11,27 +23,28 @@ export class DerivedKey {
 
   static async new(password: string) {
     const { key, options } = await this.createKey(password, createSalt());
-    return new DerivedKey(key, options);
+    return new UserKey(key, options);
   }
 
   static async fromSaltedPassword(password: string, salt: Uint8Array) {
     const { key, options } = await this.createKey(password, salt);
-    return new DerivedKey(key, options);
+    return new UserKey(key, options);
   }
 
-  static async fromJWK(jwk: DerivedKeyJson) {
+  static async fromJSON(jwk: JsonLocalAuthKey) {
     const key = await crypto.subtle.importKey(
       "jwk",
       jwk.key,
       this.ENCRYPTION_ALGORITHM,
       true,
-      ["encrypt", "decrypt"]
+      [...UserKey.KEY_OPERATIONS]
     );
-    return new DerivedKey(key, jwk.options);
+    return new UserKey(key, jwk.options);
   }
 
   private static async createKey(password: string, salt: Uint8Array) {
     const options: DerivedKeyOptions = {
+      type: "user",
       version: "001",
       deriveKeyAlgorithm: "PBKDF2",
       key: {
@@ -63,7 +76,7 @@ export class DerivedKey {
       deriveKey,
       { name: options.key.algorithm, length: options.key.length },
       true,
-      ["encrypt", "decrypt"]
+      [...UserKey.KEY_OPERATIONS]
     );
 
     return {
@@ -77,33 +90,27 @@ export class DerivedKey {
 
     const encryptedData = await globalThis.crypto.subtle.encrypt(
       {
-        name: DerivedKey.ENCRYPTION_ALGORITHM,
+        name: UserKey.ENCRYPTION_ALGORITHM,
         iv: iv,
       },
       this.key,
       dataToEncrypt
     );
 
-    return { encryptedData: new Uint8Array(encryptedData), iv };
+    return { data: new Uint8Array(encryptedData), iv };
   }
 
-  async decrypt({
-    iv,
-    encryptedData,
-  }: {
-    iv: Uint8Array;
-    encryptedData: ArrayBuffer;
-  }) {
+  async decrypt(encrypted: Encrypted) {
     const result = await crypto.subtle.decrypt(
-      { name: this.options.key.algorithm, iv: iv },
+      { name: this.options.key.algorithm, iv: encrypted.iv },
       this.key,
-      encryptedData
+      encrypted.data
     );
 
     return new Uint8Array(result);
   }
 
-  async toJWK(): Promise<DerivedKeyJson> {
+  async toJSON(): Promise<JsonLocalAuthKey> {
     return {
       key: await crypto.subtle.exportKey("jwk", this.key),
       options: this.options,
@@ -112,5 +119,9 @@ export class DerivedKey {
 
   get salt() {
     return this.options.key.salt;
+  }
+
+  get cryptoKey() {
+    return this.key;
   }
 }

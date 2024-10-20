@@ -1,15 +1,15 @@
-import { DerivedKey } from "../dervied-key.ts";
+import { UserKey } from "../user-key.ts";
 import { assertEquals } from "@std/assert/equals";
 import { assertRejects } from "@std/assert";
 import { createIV } from "../key-utils.ts";
 
 Deno.test({
-  name: "DerivedKey: new key with random salt can not decrypt",
+  name: "UserKey: new key with random salt can not decrypt",
   async fn() {
     const password = "password";
 
-    const key = await DerivedKey.new(password);
-    const keyWithAnotherSalt = await DerivedKey.new(password);
+    const key = await UserKey.new(password);
+    const keyWithAnotherSalt = await UserKey.new(password);
 
     const toEncrypt = "some data";
 
@@ -22,30 +22,28 @@ Deno.test({
 });
 
 Deno.test({
-  name: "DerivedKey: same key with other iv can not decrypt",
+  name: "UserKey: same key with other iv can not decrypt",
   async fn() {
     const password = "password";
 
-    const key = await DerivedKey.new(password);
+    const key = await UserKey.new(password);
 
     const toEncrypt = "some data";
 
-    const { encryptedData } = await key.encrypt(
-      new TextEncoder().encode(toEncrypt)
-    );
+    const encrypted = await key.encrypt(new TextEncoder().encode(toEncrypt));
 
-    assertRejects(() => key.decrypt({ iv: createIV(), encryptedData }));
+    assertRejects(() => key.decrypt({ iv: createIV(), data: encrypted.data }));
   },
 });
 
 Deno.test({
-  name: "DerivedKey: new key with other password can not decrypt",
+  name: "UserKey: new key with other password can not decrypt",
   async fn() {
     const password = "password";
     const passwordOther = "passwor";
 
-    const key = await DerivedKey.new(password);
-    const keyWithAnotherSalt = await DerivedKey.fromSaltedPassword(
+    const key = await UserKey.new(password);
+    const keyWithAnotherSalt = await UserKey.fromSaltedPassword(
       passwordOther,
       key.salt
     );
@@ -61,12 +59,12 @@ Deno.test({
 });
 
 Deno.test({
-  name: "DerivedKey: encrypts and decrypts with same password and salt",
+  name: "UserKey: encrypts and decrypts with same password and salt",
   async fn() {
     const password = "password";
 
-    const key = await DerivedKey.new(password);
-    const keyWithAnotherSalt = await DerivedKey.fromSaltedPassword(
+    const key = await UserKey.new(password);
+    const keyWithAnotherSalt = await UserKey.fromSaltedPassword(
       password,
       key.salt
     );
@@ -83,12 +81,12 @@ Deno.test({
 });
 
 Deno.test({
-  name: "DerivedKey: encrypts and decrypts with jwk export and import",
+  name: "UserKey: encrypts and decrypts with JSON export and import",
   async fn() {
     const password = "password";
 
-    const key = await DerivedKey.new(password);
-    const keyWithAnotherSalt = await DerivedKey.fromJWK(await key.toJWK());
+    const key = await UserKey.new(password);
+    const keyWithAnotherSalt = await UserKey.fromJSON(await key.toJSON());
 
     const toEncrypt = "some data";
 

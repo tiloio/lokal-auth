@@ -1,1 +1,1 @@
-export * from "./src/key/dervied-key.ts";
+export * from "./src/key/user-key.ts";
