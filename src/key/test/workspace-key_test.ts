@@ -3,6 +3,7 @@ import { WorkspaceKey } from "../workspace-key.ts";
 import { createIV } from "../key-utils.ts";
 import { assertRejects } from "@std/assert/rejects";
 import { UserKey } from "../user-key.ts";
+import { encodeBase64 } from "jsr:@std/encoding/base64";
 
 Deno.test({
   name: "WorkspaceKey: can create new key and encrypt and decrypt data",
@@ -62,16 +63,32 @@ Deno.test({
   },
 });
 
+Deno.test({
+  name: "WorkspaceKey: can not import key with wrong UserKey",
+  async fn() {
+    const userKey = await UserKey.new("password");
+    const otherUserKey = await UserKey.new("password");
+    const workspaceKey = await WorkspaceKey.new();
+
+    const exportedKey = await workspaceKey.toJSON(otherUserKey);
+
+    assertRejects(() => WorkspaceKey.fromJSON(userKey, exportedKey));
+  },
+});
 
 Deno.test({
-    name: "WorkspaceKey: can not import key with wrong UserKey",
-    async fn() {
-      const userKey = await UserKey.new("password");
-      const otherUserKey = await UserKey.new("password");
-      const workspaceKey = await WorkspaceKey.new();
-  
-      const exportedKey = await workspaceKey.toJSON(otherUserKey);
-  
-      assertRejects(() => WorkspaceKey.fromJSON(userKey, exportedKey));
-    },
-  });
+  name: "WorkspaceKey: can not import key with wrong iv in UserKey",
+  async fn() {
+    const userKey = await UserKey.new("password");
+    const workspaceKey = await WorkspaceKey.new();
+
+    const exportedKey = await workspaceKey.toJSON(userKey);
+
+    assertRejects(() =>
+      WorkspaceKey.fromJSON(userKey, {
+        ...exportedKey,
+        iv: encodeBase64(createIV()),
+      })
+    );
+  },
+});
