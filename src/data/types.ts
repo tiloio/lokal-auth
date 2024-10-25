@@ -30,14 +30,3 @@ export type DecryptedEventData<T> = {
   device: string; // the user agent which was used to create the event
   data: Partial<T>;
 };
-
-export interface EventRepositoryAdapter {
-  getWorkspaceEvents(workspace: string): Promise<EncryptedEvent[]>;
-  getPathEvents(
-    workspace: string,
-    hashedPath: Uint8Array[]
-  ): Promise<EncryptedEvent[]>;
-  saveEvent(event: EncryptedEvent): Promise<void>;
-  close(): Promise<void>;
-  allEvents(): Promise<EncryptedEvent[]>;
-}
