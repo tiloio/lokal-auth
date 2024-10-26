@@ -160,8 +160,7 @@ Deno.test({
   async fn() {
     const startTime = new Date();
 
-    const { workspace, workspaceKey, user, adapter, encoder } =
-      await newWorkspace();
+    const { workspace, user } = await newWorkspace();
 
     const expectedEvent = Object.freeze({
       path: "test/test",
@@ -193,5 +192,53 @@ Deno.test({
     assertEquals(event.user, user.id);
 
     assertObjectMatch(event.data, expectedEvent.data);
+  },
+});
+
+Deno.test({
+  name: "Workspace: loadPath loads all event for a path",
+  async fn() {
+    const { workspace } = await newWorkspace();
+
+    const path = "car/1";
+    const pathEvents = [{
+      path,
+      data: "event1",
+    }, {
+      path,
+      data: "event2",
+    }, {
+      path,
+      data: "event3",
+    }, {
+      path,
+      data: "event4",
+    }];
+    const newEvents = [
+      {
+        path: "car/2",
+        data: "not car 1 car/2",
+      },
+      ...pathEvents,
+      {
+        path: "car",
+        data: "not car 1 car",
+      },
+      {
+        path: "car/",
+        data: "not car 1 car/",
+      },
+    ];
+
+    await Promise.all(newEvents.map((event) => workspace.saveEvent(event)));
+    const events = await workspace.loadPath(path);
+
+    const expectedEvents = pathEvents.map((event) => {
+      return { data: event.data, path: event.path };
+    });
+    const currentEvents = events.map((event) => {
+      return { data: event.data, path: event.path };
+    });
+    assertEquals(currentEvents, expectedEvents);
   },
 });

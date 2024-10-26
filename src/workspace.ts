@@ -68,6 +68,27 @@ export class Workspace {
       );
     }
 
+    return await this.decryptAndDecodeEvent(encryptedEvent);
+  }
+
+  async loadPath<T>(path: string): Promise<Event<T>[]> {
+    const encryptedEvents = await this.eventRepository.getPathEvents(
+      this.id,
+      await EventPath.hash(path),
+    );
+
+    const events = await Promise.all(
+      encryptedEvents.map((encryptedEvent) => {
+        return this.decryptAndDecodeEvent(encryptedEvent);
+      }),
+    );
+
+    return events;
+  }
+
+  private async decryptAndDecodeEvent<T>(
+    encryptedEvent: EncryptedEvent,
+  ): Promise<Event<T>> {
     const decryptedEventData = await this.workspaceKey.decrypt({
       iv: encryptedEvent.iv,
       data: encryptedEvent.event,
@@ -84,9 +105,9 @@ export class Workspace {
         date: new Date(eventData.date),
       };
     } catch (error: any) {
-      throw new Error(
-        `Event with id "${id}" in workspace "${this.id}" could not be decoded: ${error?.message}`,
-      );
+      error.message =
+        `Event with id "${encryptedEvent.id}" in workspace "${this.id}" could not be decoded: ${error?.message}`;
+      throw error;
     }
   }
 }

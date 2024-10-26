@@ -3,6 +3,8 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.6",
     "jsr:@std/assert@1": "1.0.6",
+    "jsr:@std/bytes@*": "1.0.2",
+    "jsr:@std/bytes@1.0.2": "1.0.2",
     "jsr:@std/bytes@^1.0.2": "1.0.2",
     "jsr:@std/cbor@*": "0.1.2",
     "jsr:@std/cbor@0.1.2": "0.1.2",
@@ -24,7 +26,7 @@
     "@std/cbor@0.1.2": {
       "integrity": "1d80f372355bc815252a0217e53c6334e2a4eaf03bb298aad8b9008e0bead0ff",
       "dependencies": [
-        "jsr:@std/bytes",
+        "jsr:@std/bytes@^1.0.2",
         "jsr:@std/streams"
       ]
     },

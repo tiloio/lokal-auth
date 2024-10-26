@@ -1,5 +1,6 @@
 import type { EncryptedEvent } from "../../types.ts";
 import type { EventRepositoryAdapter } from "../event-adapter.types.ts";
+import { equals } from "jsr:@std/bytes@1.0.2";
 
 export class InMemoryAdapter implements EventRepositoryAdapter {
   private store: EncryptedEvent[] = [];
@@ -29,7 +30,11 @@ export class InMemoryAdapter implements EventRepositoryAdapter {
   ): Promise<EncryptedEvent[]> {
     const events = this.store.filter(
       (event) =>
-        event.workspace === workspace && event.hashedPath === hashedPath,
+        event.workspace === workspace &&
+        hashedPath.every((hashedPathPart, index) =>
+          event.hashedPath[index] &&
+          equals(hashedPathPart, event.hashedPath[index])
+        ),
     );
     return events;
   }

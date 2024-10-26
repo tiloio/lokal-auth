@@ -1,7 +1,5 @@
-import { assert } from "@std/assert/assert";
 import { newWorkspace } from "./test_utils.ts";
-import { assertEquals } from "@std/assert/equals";
-import { assertObjectMatch } from "@std/assert/object-match";
+import { assertEquals } from "jsr:@std/assert/equals";
 
 Deno.bench({
     name: "Workspace: read event",

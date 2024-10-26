@@ -43,10 +43,9 @@ export class EncodingService {
 
         if (
             !eventData || typeof eventData !== "object" ||
-            !("data" in eventData) ||
-            typeof eventData.data !== "object" || !eventData.data
+            !("data" in eventData)
         ) {
-            throw error(eventData, "data", "object");
+            throw error(eventData, "data", "any");
         }
 
         if (
@@ -61,7 +60,7 @@ export class EncodingService {
             device: eventData.device,
             date: Number(eventData.date),
             path: eventData.path,
-            data: eventData.data,
+            data: eventData.data as T,
             user: eventData.user,
         };
     }
