@@ -1,20 +1,20 @@
 import { createIV } from "./key-utils.ts";
 import type {
+  Encrypted,
+  JsonEncryptedWorkspaceKey,
   JsonLocalAuthKey,
   LokalAuthKey,
-  Encrypted,
   WorkspaceKeyOptions,
-  JsonEncryptedWorkspaceKey,
 } from "./types.ts";
 import type { UserKey } from "./user-key.ts";
-import { encodeBase64, decodeBase64 } from "jsr:@std/encoding";
+import { decodeBase64, encodeBase64 } from "jsr:@std/encoding";
 
 export class WorkspaceKey implements LokalAuthKey {
   private static ENCRYPTION_ALGORITHM = "AES-GCM" as const;
 
   private constructor(
     private key: CryptoKey,
-    public readonly options: WorkspaceKeyOptions
+    public readonly options: WorkspaceKeyOptions,
   ) {}
 
   static async new() {
@@ -33,7 +33,7 @@ export class WorkspaceKey implements LokalAuthKey {
       },
       "AES-GCM",
       true,
-      ["encrypt", "decrypt"]
+      ["encrypt", "decrypt"],
     );
 
     return new WorkspaceKey(key, jwk.options);
@@ -55,7 +55,7 @@ export class WorkspaceKey implements LokalAuthKey {
         length: options.key.length,
       },
       true,
-      ["encrypt", "decrypt"]
+      ["encrypt", "decrypt"],
     );
 
     return {
@@ -73,7 +73,7 @@ export class WorkspaceKey implements LokalAuthKey {
         iv: iv,
       },
       this.key,
-      dataToEncrypt
+      dataToEncrypt,
     );
 
     return { data: new Uint8Array(encryptedData), iv };
@@ -83,7 +83,7 @@ export class WorkspaceKey implements LokalAuthKey {
     const result = await crypto.subtle.decrypt(
       { name: this.options.key.algorithm, iv: encrypted.iv },
       this.key,
-      encrypted.data
+      encrypted.data,
     );
 
     return new Uint8Array(result);
@@ -98,7 +98,7 @@ export class WorkspaceKey implements LokalAuthKey {
       {
         name: WorkspaceKey.ENCRYPTION_ALGORITHM,
         iv,
-      }
+      },
     );
 
     return {

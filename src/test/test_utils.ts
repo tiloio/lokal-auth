@@ -8,30 +8,30 @@ import { CborAdapter } from "../data/adapters/encoding/cbor-adapter.ts";
 import { EncodingService } from "../encoding-service.ts";
 
 export async function newWorkspace() {
-    const encoder = new CborAdapter();
-    const encodingService = new EncodingService(encoder);
-    const adapter = new InMemoryAdapter();
-    const eventRepository = new EventRepository(adapter);
-    const userKey = await UserKey.new("test");
-    const userId = "some user id";
-    const user = new User(userId, userKey);
-    const workspaceKey = await WorkspaceKey.new();
-    const workspaceId = "some workspace id";
-    const workspaceName = "Some Workspace";
-    const workspace = new Workspace(
-        workspaceId,
-        workspaceName,
-        userId,
-        workspaceKey,
-        eventRepository,
-        encodingService,
-    );
+  const encoder = new CborAdapter();
+  const encodingService = new EncodingService(encoder);
+  const adapter = new InMemoryAdapter();
+  const eventRepository = new EventRepository(adapter);
+  const userKey = await UserKey.new("test");
+  const userId = "some user id";
+  const user = new User(userId, userKey);
+  const workspaceKey = await WorkspaceKey.new();
+  const workspaceId = "some workspace id";
+  const workspaceName = "Some Workspace";
+  const workspace = new Workspace(
+    workspaceId,
+    workspaceName,
+    userId,
+    workspaceKey,
+    eventRepository,
+    encodingService,
+  );
 
-    return {
-        workspace,
-        workspaceKey,
-        user,
-        encoder,
-        adapter,
-    };
+  return {
+    workspace,
+    workspaceKey,
+    user,
+    encoder,
+    adapter,
+  };
 }

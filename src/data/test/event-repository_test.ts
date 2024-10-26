@@ -1,12 +1,12 @@
 import { InMemoryAdapter } from "../adapters/events/in-memory-adapter.ts";
 import { EventRepository } from "../event-repository.ts";
 import {
-  assertExists,
   assertEquals,
-  assertLessOrEqual,
-  assertObjectMatch,
+  assertExists,
   assertGreaterOrEqual,
+  assertLessOrEqual,
   assertNotEquals,
+  assertObjectMatch,
 } from "jsr:@std/assert";
 
 Deno.test({

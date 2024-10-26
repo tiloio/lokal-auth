@@ -45,7 +45,8 @@ Deno.test({
 });
 
 Deno.test({
-  name: "WorkspaceKey: encrypts and decrypts with JSON export and import with according user key",
+  name:
+    "WorkspaceKey: encrypts and decrypts with JSON export and import with according user key",
   async fn() {
     const userKey = await UserKey.new("password");
     const workspaceKey = await WorkspaceKey.new();

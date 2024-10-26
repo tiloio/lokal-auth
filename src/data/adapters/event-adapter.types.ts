@@ -2,7 +2,10 @@ import type { EncryptedEvent } from "../types.ts";
 
 export interface EventRepositoryAdapter {
   getWorkspaceEvents(workspace: string): Promise<EncryptedEvent[]>;
-  getWorkspaceEvent(workspace: string, id: string): Promise<EncryptedEvent | undefined>;
+  getWorkspaceEvent(
+    workspace: string,
+    id: string,
+  ): Promise<EncryptedEvent | undefined>;
   getPathEvents(
     workspace: string,
     hashedPath: Uint8Array[],

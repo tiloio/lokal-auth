@@ -14,7 +14,7 @@ Deno.test({
     const toEncrypt = "some data";
 
     const encryptedData = await key.encrypt(
-      new TextEncoder().encode(toEncrypt)
+      new TextEncoder().encode(toEncrypt),
     );
 
     assertRejects(() => keyWithAnotherSalt.decrypt(encryptedData));
@@ -45,13 +45,13 @@ Deno.test({
     const key = await UserKey.new(password);
     const keyWithAnotherSalt = await UserKey.fromSaltedPassword(
       passwordOther,
-      key.salt
+      key.salt,
     );
 
     const toEncrypt = "some data";
 
     const encryptedData = await key.encrypt(
-      new TextEncoder().encode(toEncrypt)
+      new TextEncoder().encode(toEncrypt),
     );
 
     assertRejects(() => keyWithAnotherSalt.decrypt(encryptedData));
@@ -66,13 +66,13 @@ Deno.test({
     const key = await UserKey.new(password);
     const keyWithAnotherSalt = await UserKey.fromSaltedPassword(
       password,
-      key.salt
+      key.salt,
     );
 
     const toEncrypt = "some data";
 
     const encryptedData = await key.encrypt(
-      new TextEncoder().encode(toEncrypt)
+      new TextEncoder().encode(toEncrypt),
     );
     const decryptedData = await keyWithAnotherSalt.decrypt(encryptedData);
 
@@ -91,7 +91,7 @@ Deno.test({
     const toEncrypt = "some data";
 
     const encryptedData = await key.encrypt(
-      new TextEncoder().encode(toEncrypt)
+      new TextEncoder().encode(toEncrypt),
     );
     const decryptedData = await keyWithAnotherSalt.decrypt(encryptedData);
 

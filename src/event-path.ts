@@ -7,7 +7,7 @@ export class EventPath {
     const arrayBuffers = await Promise.all(
       splittedPath.map((part) =>
         globalThis.crypto.subtle.digest("SHA-1", encoder.encode(part))
-      )
+      ),
     );
 
     return arrayBuffers.map((part) => new Uint8Array(part));

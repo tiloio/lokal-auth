@@ -1,10 +1,10 @@
 import { assertEquals } from "@std/assert/equals";
 import { createIV, createSalt } from "./key-utils.ts";
 import type {
-  JsonLocalAuthKey,
   DerivedKeyOptions,
-  LokalAuthKey,
   Encrypted,
+  JsonLocalAuthKey,
+  LokalAuthKey,
 } from "./types.ts";
 
 export class UserKey implements LokalAuthKey {
@@ -18,7 +18,7 @@ export class UserKey implements LokalAuthKey {
 
   private constructor(
     private key: CryptoKey,
-    public readonly options: DerivedKeyOptions
+    public readonly options: DerivedKeyOptions,
   ) {}
 
   static async new(password: string) {
@@ -37,7 +37,7 @@ export class UserKey implements LokalAuthKey {
       jwk.key,
       this.ENCRYPTION_ALGORITHM,
       true,
-      [...UserKey.KEY_OPERATIONS]
+      [...UserKey.KEY_OPERATIONS],
     );
     return new UserKey(key, jwk.options);
   }
@@ -63,7 +63,7 @@ export class UserKey implements LokalAuthKey {
       passBuffer,
       { name: options.deriveKeyAlgorithm },
       false,
-      ["deriveBits", "deriveKey"]
+      ["deriveBits", "deriveKey"],
     );
 
     const key = await globalThis.crypto.subtle.deriveKey(
@@ -76,7 +76,7 @@ export class UserKey implements LokalAuthKey {
       deriveKey,
       { name: options.key.algorithm, length: options.key.length },
       true,
-      [...UserKey.KEY_OPERATIONS]
+      [...UserKey.KEY_OPERATIONS],
     );
 
     return {
@@ -94,7 +94,7 @@ export class UserKey implements LokalAuthKey {
         iv: iv,
       },
       this.key,
-      dataToEncrypt
+      dataToEncrypt,
     );
 
     return { data: new Uint8Array(encryptedData), iv };
@@ -104,7 +104,7 @@ export class UserKey implements LokalAuthKey {
     const result = await crypto.subtle.decrypt(
       { name: this.options.key.algorithm, iv: encrypted.iv },
       this.key,
-      encrypted.data
+      encrypted.data,
     );
 
     return new Uint8Array(result);

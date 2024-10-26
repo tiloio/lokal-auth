@@ -19,13 +19,13 @@ with the possibility to share data with other users.
 
 - [] load user from session storage
   - [] add adapter and encoding to User class to be able to save and load
-  workspaces
+    workspaces
   - [] save and load workspaces to adapter
 - [] Create PathAssembler to assemble alle events under one path into the latest
   object
-  - [] LATER: add performace optimizations with caching??? or assemble stop if all
-    known keys are filled (therefore we have to know the keys from the very last
-    event)???
+  - [] LATER: add performace optimizations with caching??? or assemble stop if
+    all known keys are filled (therefore we have to know the keys from the very
+    last event)???
 - [] create local storage adapters
 - [] create indexeddb adapters
 - [] LATER: maybe add caching of current event to the path???
