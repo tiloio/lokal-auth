@@ -1,6 +1,6 @@
-import type { WorkspaceKey } from "./key/workspace-key.ts";
-import type { EventRepository } from "./data/event-repository.ts";
-import type { User } from "./user.ts";
+import { WorkspaceKey } from "./key/workspace-key.ts";
+import { EventRepository } from "./data/event-repository.ts";
+import { User } from "./user.ts";
 import type {
   DecryptedEventData,
   EncryptedEvent,
@@ -8,20 +8,36 @@ import type {
   NewEvent,
 } from "./data/types.ts";
 import { EventPath } from "./event-path.ts";
-import type { EncodingService } from "./encoding-service.ts";
+import { EncodingService } from "./encoding-service.ts";
+import type { EventRepositoryAdapter } from "./data/adapters/event-adapter.types.ts";
+import type { EncodingAdapter } from "./data/adapters/encoding-adapter.types.ts";
 
 export class Workspace {
   constructor(
     public readonly id: string,
     public readonly name: string,
     public readonly user: User,
-    private readonly workspaceKey: WorkspaceKey,
+    public readonly workspaceKey: WorkspaceKey,
     private readonly eventRepository: EventRepository,
     private readonly encodingService: EncodingService,
   ) {}
 
+  static async new(
+    options: NewWorkspaceOptions,
+    adapters: WorkspaceAdapters,
+  ): Promise<Workspace> {
+    return new Workspace(
+      crypto.randomUUID(),
+      options.name,
+      options.user,
+      await WorkspaceKey.new(),
+      new EventRepository(adapters.repository),
+      new EncodingService(adapters.encoding),
+    );
+  }
+
   async saveEvent<T>(newEvent: NewEvent<T>): Promise<Event<T>> {
-    // Save the current event-count-content-hash for the hashedPath in the workspace
+    // Save the current event-count-content-hash (to know what the current state is with one check) for the hashedPath in the workspace
     const date = new Date();
     const eventData = {
       device: globalThis.navigator.userAgent,
@@ -71,7 +87,7 @@ export class Workspace {
     return await this.decryptAndDecodeEvent(encryptedEvent);
   }
 
-  async loadPath<T>(path: string): Promise<Event<T>[]> {
+  async loadPathEvents<T>(path: string): Promise<Event<T>[]> {
     const encryptedEvents = await this.eventRepository.getPathEvents(
       this.id,
       await EventPath.hash(path),
@@ -111,3 +127,13 @@ export class Workspace {
     }
   }
 }
+
+type NewWorkspaceOptions = {
+  name: string;
+  user: User;
+};
+
+type WorkspaceAdapters = {
+  repository: EventRepositoryAdapter;
+  encoding: EncodingAdapter;
+};

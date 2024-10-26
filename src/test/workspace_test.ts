@@ -196,7 +196,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Workspace: loadPath loads all event for a path",
+  name: "Workspace: loadPathEvents loads all event for a path",
   async fn() {
     const { workspace } = await newWorkspace();
 
@@ -231,7 +231,7 @@ Deno.test({
     ];
 
     await Promise.all(newEvents.map((event) => workspace.saveEvent(event)));
-    const events = await workspace.loadPath(path);
+    const events = await workspace.loadPathEvents(path);
 
     const expectedEvents = pathEvents.map((event) => {
       return { data: event.data, path: event.path };
