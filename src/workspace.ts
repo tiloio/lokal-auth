@@ -13,9 +13,7 @@ import type { EncodingAdapter } from "./data/adapters/encoding-adapter.types.ts"
 
 export class Workspace {
   constructor(
-    public readonly id: string,
-    public readonly name: string,
-    public readonly userId: string,
+    public readonly attributes: WorkspaceAttributes,
     public readonly workspaceKey: WorkspaceKey,
     private readonly eventRepository: EventRepository,
     private readonly encodingService: EncodingService,
@@ -26,9 +24,11 @@ export class Workspace {
     adapters: WorkspaceAdapters,
   ): Promise<Workspace> {
     return new Workspace(
-      crypto.randomUUID(),
-      options.name,
-      options.userId,
+      {
+        name: options.name,
+        id: crypto.randomUUID(),
+        userId: options.userId,
+      },
       await WorkspaceKey.new(),
       new EventRepository(adapters.repository),
       new EncodingService(adapters.encoding),
@@ -40,9 +40,11 @@ export class Workspace {
     adapters: WorkspaceAdapters,
   ): Workspace {
     return new Workspace(
-      options.id,
-      options.name,
-      options.userId,
+      {
+        id: options.id,
+        name: options.name,
+        userId: options.userId,
+      },
       options.key,
       new EventRepository(adapters.repository),
       new EncodingService(adapters.encoding),
@@ -55,7 +57,7 @@ export class Workspace {
     const eventData = {
       device: globalThis.navigator.userAgent,
       path: newEvent.path,
-      user: this.userId,
+      user: this.attributes.userId,
       date: date.getTime(),
       data: newEvent.data,
     } satisfies DecryptedEventData<T>;
@@ -68,7 +70,7 @@ export class Workspace {
       id: crypto.randomUUID(),
       version: 0,
       iv: encryptedEventData.iv,
-      workspace: this.id,
+      workspace: this.attributes.id,
       hashedPath: await EventPath.hash(newEvent.path),
       event: encryptedEventData.data,
     } satisfies EncryptedEvent;
@@ -86,14 +88,14 @@ export class Workspace {
     };
   }
 
-  async loadEvent<T>(id: string): Promise<Event<T>> {
+  async loadEvent<T>(eventId: string): Promise<Event<T>> {
     const encryptedEvent = await this.eventRepository.getWorkspaceEvent(
-      this.id,
-      id,
+      this.attributes.id,
+      eventId,
     );
     if (!encryptedEvent) {
       throw new Error(
-        `Event with id "${id}" in workspace "${this.id}" not found`,
+        `Event with id "${eventId}" in workspace "${this.attributes.id}" not found`,
       );
     }
 
@@ -102,7 +104,7 @@ export class Workspace {
 
   async loadPathEvents<T>(path: string): Promise<Event<T>[]> {
     const encryptedEvents = await this.eventRepository.getPathEvents(
-      this.id,
+      this.attributes.id,
       await EventPath.hash(path),
     );
 
@@ -135,11 +137,17 @@ export class Workspace {
       };
     } catch (error: any) {
       error.message =
-        `Event with id "${encryptedEvent.id}" in workspace "${this.id}" could not be decoded: ${error?.message}`;
+        `Event with id "${encryptedEvent.id}" in workspace "${this.attributes.id}" could not be decoded: ${error?.message}`;
       throw error;
     }
   }
 }
+
+export type WorkspaceAttributes = {
+  name: string;
+  id: string;
+  userId: string;
+};
 
 type NewWorkspaceOptions = {
   name: string;

@@ -80,7 +80,7 @@ Deno.test({
 
     assertExists(event.id);
     assertEquals(event.version, 0);
-    assertEquals(event.workspace, workspace.id);
+    assertEquals(event.workspace, workspace.attributes.id);
     assertEquals(event.hashedPath, [
       new Uint8Array([
         169,
@@ -187,7 +187,7 @@ Deno.test({
     assertEquals(event.version, savedEvent.version);
 
     assertEquals(event.device, globalThis.navigator.userAgent);
-    assertEquals(event.workspace, workspace.id);
+    assertEquals(event.workspace, workspace.attributes.id);
     assertEquals(event.path, expectedEvent.path);
     assertEquals(event.user, user.id);
 
