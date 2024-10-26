@@ -1,6 +1,5 @@
 import { WorkspaceKey } from "./key/workspace-key.ts";
 import { EventRepository } from "./data/event-repository.ts";
-import { User } from "./user.ts";
 import type {
   DecryptedEventData,
   EncryptedEvent,
@@ -16,7 +15,7 @@ export class Workspace {
   constructor(
     public readonly id: string,
     public readonly name: string,
-    public readonly user: User,
+    public readonly userId: string,
     public readonly workspaceKey: WorkspaceKey,
     private readonly eventRepository: EventRepository,
     private readonly encodingService: EncodingService,
@@ -29,8 +28,22 @@ export class Workspace {
     return new Workspace(
       crypto.randomUUID(),
       options.name,
-      options.user,
+      options.userId,
       await WorkspaceKey.new(),
+      new EventRepository(adapters.repository),
+      new EncodingService(adapters.encoding),
+    );
+  }
+
+  static fromKey(
+    options: FromKeyWorkspaceOptions,
+    adapters: WorkspaceAdapters,
+  ): Workspace {
+    return new Workspace(
+      options.id,
+      options.name,
+      options.userId,
+      options.key,
       new EventRepository(adapters.repository),
       new EncodingService(adapters.encoding),
     );
@@ -42,7 +55,7 @@ export class Workspace {
     const eventData = {
       device: globalThis.navigator.userAgent,
       path: newEvent.path,
-      user: this.user.id,
+      user: this.userId,
       date: date.getTime(),
       data: newEvent.data,
     } satisfies DecryptedEventData<T>;
@@ -130,8 +143,13 @@ export class Workspace {
 
 type NewWorkspaceOptions = {
   name: string;
-  user: User;
+  userId: string;
 };
+
+type FromKeyWorkspaceOptions = {
+  key: WorkspaceKey;
+  id: string;
+} & NewWorkspaceOptions;
 
 type WorkspaceAdapters = {
   repository: EventRepositoryAdapter;

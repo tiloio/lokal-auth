@@ -21,7 +21,7 @@ export async function newWorkspace() {
     const workspace = new Workspace(
         workspaceId,
         workspaceName,
-        user,
+        userId,
         workspaceKey,
         eventRepository,
         encodingService,

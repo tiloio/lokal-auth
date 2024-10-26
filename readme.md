@@ -3,7 +3,6 @@
 A local first browser based event driven database with end to end encryption
 with the possibility to share data with other users.
 
-
 ## Goals of this project
 
 - [] end to end encryption
@@ -15,6 +14,21 @@ with the possibility to share data with other users.
   - [] there are no merge conflicts possible but we should have a notification
     way that someone changed something
 - [] allow to share a workspace with other users
+
+## Todos
+
+- [] load user from session storage
+  - [] add adapter and encoding to User class to be able to save and load
+  workspaces
+  - [] save and load workspaces to adapter
+- [] Create PathAssembler to assemble alle events under one path into the latest
+  object
+  - [] LATER: add performace optimizations with caching??? or assemble stop if all
+    known keys are filled (therefore we have to know the keys from the very last
+    event)???
+- [] create local storage adapters
+- [] create indexeddb adapters
+- [] LATER: maybe add caching of current event to the path???
 
 ## Known Issues
 
@@ -59,7 +73,6 @@ then be exported as JSON Web Key which can be shared with the other user.
 If you have the key to that workspace, you can always access it. To prevent
 someone to have access, we have to change the encryption of everything. To do
 that we have to copy everything - which costs a lot.
-
 
 # Development
 
