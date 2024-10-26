@@ -15,9 +15,11 @@ import { WorkspaceKey } from "../key/workspace-key.ts";
 import { User } from "../user.ts";
 import type { DecryptedEventData } from "../data/types.ts";
 import { CborAdapter } from "../data/adapters/encoding/cbor-adapter.ts";
+import { EncodingService } from "../encoding-service.ts";
 
 async function newWorkspace() {
   const encoder = new CborAdapter();
+  const encodingService = new EncodingService(encoder);
   const adapter = new InMemoryAdapter();
   const eventRepository = new EventRepository(adapter);
   const userKey = await UserKey.new("test");
@@ -32,7 +34,7 @@ async function newWorkspace() {
     user,
     workspaceKey,
     eventRepository,
-    encoder,
+    encodingService,
   );
 
   return {
