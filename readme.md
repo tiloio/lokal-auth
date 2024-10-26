@@ -25,7 +25,9 @@ with the possibility to share data with other users.
   object
   - [] LATER: add performace optimizations with caching??? or assemble stop if
     all known keys are filled (therefore we have to know the keys from the very
-    last event)??? -- we can cache the current state in the path like `car/1/#` is the current state of the `car/1`. This `/#` path is getting updated with every event.
+    last event)??? -- we can cache the current state in the path like `car/1/#`
+    is the current state of the `car/1`. This `/#` path is getting updated with
+    every event.
 - [] create local storage adapters
 - [] create indexeddb adapters
 - [] LATER: maybe add caching of current event to the path???
