@@ -25,7 +25,7 @@ with the possibility to share data with other users.
   object
   - [] LATER: add performace optimizations with caching??? or assemble stop if
     all known keys are filled (therefore we have to know the keys from the very
-    last event)???
+    last event)??? -- we can cache the current state in the path like `car/1/#` is the current state of the `car/1`. This `/#` path is getting updated with every event.
 - [] create local storage adapters
 - [] create indexeddb adapters
 - [] LATER: maybe add caching of current event to the path???
@@ -79,6 +79,7 @@ that we have to copy everything - which costs a lot.
 ## Scripts
 
 ```bash
+deno task pcc # pre commit check: formatting, linting, and testing
 deno task dev # testing with watcher
 deno task bench # benchmarking
 ```

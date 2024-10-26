@@ -66,9 +66,11 @@ export class EncodingService {
   }
 }
 
+//deno-lint-ignore no-explicit-any
 function error(eventData: any, name: string, type: string) {
   return new Error(
-    `No valid "${name}" property as ${type}. Got "${eventData?.date}" as type "${typeof eventData
-      ?.date}"`,
+    `No valid "${name}" property as ${type}. Got "${
+      eventData?.[name]
+    }" as type "${typeof eventData?.[name]}"`,
   );
 }

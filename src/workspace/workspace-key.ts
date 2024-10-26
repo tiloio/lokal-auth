@@ -2,7 +2,6 @@ import { createIV } from "../key/key-utils.ts";
 import type {
   Encrypted,
   JsonEncryptedWorkspaceKey,
-  JsonLocalAuthKey,
   LokalAuthKey,
   WorkspaceKeyOptions,
 } from "../key/types.ts";

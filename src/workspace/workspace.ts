@@ -135,9 +135,11 @@ export class Workspace {
         ...eventData,
         date: new Date(eventData.date),
       };
-    } catch (error: any) {
-      error.message =
-        `Event with id "${encryptedEvent.id}" in workspace "${this.attributes.id}" could not be decoded: ${error?.message}`;
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "message" in error) {
+        error.message =
+          `Event with id "${encryptedEvent.id}" in workspace "${this.attributes.id}" could not be decoded: ${error?.message}`;
+      }
       throw error;
     }
   }

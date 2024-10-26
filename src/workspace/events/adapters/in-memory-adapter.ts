@@ -1,3 +1,5 @@
+//deno-lint-ignore-file require-await
+
 import type { EncryptedEvent } from "../types.ts";
 import type { EventRepositoryAdapter } from "./event-adapter.types.ts";
 import { equals } from "jsr:@std/bytes@1.0.2";

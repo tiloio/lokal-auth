@@ -9,21 +9,21 @@ export class EventRepository {
   }
 
   async getWorkspaceEvents(workspace: string): Promise<EncryptedEvent[]> {
-    return this.adapter.getWorkspaceEvents(workspace);
+    return await this.adapter.getWorkspaceEvents(workspace);
   }
 
   async getWorkspaceEvent(
     workspace: string,
     id: string,
   ): Promise<EncryptedEvent | undefined> {
-    return this.adapter.getWorkspaceEvent(workspace, id);
+    return await this.adapter.getWorkspaceEvent(workspace, id);
   }
 
   async getPathEvents(
     workspace: string,
     path: Uint8Array[],
   ): Promise<EncryptedEvent[]> {
-    return this.adapter.getPathEvents(workspace, path);
+    return await this.adapter.getPathEvents(workspace, path);
   }
 
   async saveEvent(encryptedEvent: EncryptedEvent): Promise<void> {

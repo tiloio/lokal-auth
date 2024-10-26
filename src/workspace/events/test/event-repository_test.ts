@@ -1,13 +1,6 @@
 import { InMemoryAdapter } from "../adapters/in-memory-adapter.ts";
 import { EventRepository } from "../event-repository.ts";
-import {
-  assertEquals,
-  assertExists,
-  assertGreaterOrEqual,
-  assertLessOrEqual,
-  assertNotEquals,
-  assertObjectMatch,
-} from "jsr:@std/assert";
+import { assertEquals, assertObjectMatch } from "jsr:@std/assert";
 
 Deno.test({
   name: "EventRepository: saveEvent saves encrypted into the adapter",

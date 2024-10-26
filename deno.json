@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "exports": "./mod.ts",
   "tasks": {
-    "dev": "deno test --unstable-kv --watch --parallel",
-    "test": "deno test --unstable-kv --parallel"
+    "dev": "deno test --watch --parallel",
+    "test": "deno test --parallel",
+    "pcc": "deno fmt && deno lint && deno check . && deno test --parallel"
   },
   "license": "MIT",
   "imports": {

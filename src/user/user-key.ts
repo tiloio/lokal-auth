@@ -20,17 +20,20 @@ export class UserKey implements LokalAuthKey {
     public readonly options: DerivedKeyOptions,
   ) {}
 
-  static async new(password: string) {
+  static async new(password: string): Promise<UserKey> {
     const { key, options } = await this.createKey(password, createSalt());
     return new UserKey(key, options);
   }
 
-  static async fromSaltedPassword(password: string, salt: Uint8Array) {
+  static async fromSaltedPassword(
+    password: string,
+    salt: Uint8Array,
+  ): Promise<UserKey> {
     const { key, options } = await this.createKey(password, salt);
     return new UserKey(key, options);
   }
 
-  static async fromJSON(jwk: JsonLocalAuthKey) {
+  static async fromJSON(jwk: JsonLocalAuthKey): Promise<UserKey> {
     const key = await crypto.subtle.importKey(
       "jwk",
       jwk.key,
@@ -84,7 +87,7 @@ export class UserKey implements LokalAuthKey {
     };
   }
 
-  async encrypt(dataToEncrypt: Uint8Array) {
+  async encrypt(dataToEncrypt: Uint8Array): Promise<Encrypted> {
     const iv = createIV();
 
     const encryptedData = await globalThis.crypto.subtle.encrypt(
@@ -99,7 +102,7 @@ export class UserKey implements LokalAuthKey {
     return { data: new Uint8Array(encryptedData), iv };
   }
 
-  async decrypt(encrypted: Encrypted) {
+  async decrypt(encrypted: Encrypted): Promise<Uint8Array> {
     const result = await crypto.subtle.decrypt(
       { name: this.options.key.algorithm, iv: encrypted.iv },
       this.key,
@@ -116,11 +119,11 @@ export class UserKey implements LokalAuthKey {
     };
   }
 
-  get salt() {
+  get salt(): Uint8Array {
     return this.options.key.salt;
   }
 
-  get cryptoKey() {
+  get cryptoKey(): CryptoKey {
     return this.key;
   }
 }
