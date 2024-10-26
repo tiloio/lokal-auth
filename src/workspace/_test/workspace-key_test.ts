@@ -1,8 +1,8 @@
 import { assertEquals } from "@std/assert/equals";
 import { WorkspaceKey } from "../workspace-key.ts";
-import { createIV } from "../key-utils.ts";
+import { createIV } from "../../key/key-utils.ts";
 import { assertRejects } from "@std/assert/rejects";
-import { UserKey } from "../user-key.ts";
+import { UserKey } from "../../user/user-key.ts";
 import { encodeBase64 } from "jsr:@std/encoding/base64";
 
 Deno.test({

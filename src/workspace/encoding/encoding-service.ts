@@ -1,5 +1,5 @@
-import type { EncodingAdapter } from "./data/adapters/encoding-adapter.types.ts";
-import type { DecryptedEventData } from "./data/types.ts";
+import type { EncodingAdapter } from "./adapters/encoding-adapter.types.ts";
+import type { DecryptedEventData } from "../events/types.ts";
 
 export class EncodingService {
   constructor(private readonly encoder: EncodingAdapter) {}

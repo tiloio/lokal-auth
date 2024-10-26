@@ -1,1 +1,1 @@
-export * from "./src/key/user-key.ts";
+export * from "./src/user/user-key.ts";

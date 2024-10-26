@@ -1,11 +1,11 @@
-import { InMemoryAdapter } from "../data/adapters/events/in-memory-adapter.ts";
-import { EventRepository } from "../data/event-repository.ts";
+import { InMemoryAdapter } from "../events/adapters/in-memory-adapter.ts";
+import { EventRepository } from "../events/event-repository.ts";
 import { Workspace } from "../workspace.ts";
-import { UserKey } from "../key/user-key.ts";
-import { WorkspaceKey } from "../key/workspace-key.ts";
-import { User } from "../user.ts";
-import { CborAdapter } from "../data/adapters/encoding/cbor-adapter.ts";
-import { EncodingService } from "../encoding-service.ts";
+import { UserKey } from "../../user/user-key.ts";
+import { WorkspaceKey } from "../workspace-key.ts";
+import { User } from "../../user/user.ts";
+import { CborAdapter } from "../encoding/adapters/cbor-adapter.ts";
+import { EncodingService } from "../encoding/encoding-service.ts";
 
 export async function newWorkspace() {
   const encoder = new CborAdapter();
@@ -20,9 +20,9 @@ export async function newWorkspace() {
   const workspaceName = "Some Workspace";
   const workspace = new Workspace(
     {
-        id: workspaceId,
-        name: workspaceName,    
-        userId,
+      id: workspaceId,
+      name: workspaceName,
+      userId,
     },
     workspaceKey,
     eventRepository,

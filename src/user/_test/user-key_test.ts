@@ -1,7 +1,7 @@
 import { UserKey } from "../user-key.ts";
 import { assertEquals } from "@std/assert/equals";
 import { assertRejects } from "@std/assert";
-import { createIV } from "../key-utils.ts";
+import { createIV } from "../../key/key-utils.ts";
 
 Deno.test({
   name: "UserKey: new key with random salt can not decrypt",

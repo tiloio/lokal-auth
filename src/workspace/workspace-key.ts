@@ -1,12 +1,12 @@
-import { createIV } from "./key-utils.ts";
+import { createIV } from "../key/key-utils.ts";
 import type {
   Encrypted,
   JsonEncryptedWorkspaceKey,
   JsonLocalAuthKey,
   LokalAuthKey,
   WorkspaceKeyOptions,
-} from "./types.ts";
-import type { UserKey } from "./user-key.ts";
+} from "../key/types.ts";
+import type { UserKey } from "../user/user-key.ts";
 import { decodeBase64, encodeBase64 } from "jsr:@std/encoding";
 
 export class WorkspaceKey implements LokalAuthKey {

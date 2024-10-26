@@ -1,11 +1,10 @@
-import { assertEquals } from "@std/assert/equals";
-import { createIV, createSalt } from "./key-utils.ts";
+import { createIV, createSalt } from "../key/key-utils.ts";
 import type {
   DerivedKeyOptions,
   Encrypted,
   JsonLocalAuthKey,
   LokalAuthKey,
-} from "./types.ts";
+} from "../key/types.ts";
 
 export class UserKey implements LokalAuthKey {
   private static ENCRYPTION_ALGORITHM = "AES-GCM";

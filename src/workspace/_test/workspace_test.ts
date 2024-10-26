@@ -6,7 +6,7 @@ import {
   assertLessOrEqual,
   assertObjectMatch,
 } from "jsr:@std/assert";
-import type { DecryptedEventData } from "../data/types.ts";
+import type { DecryptedEventData } from "../events/types.ts";
 import { newWorkspace } from "./test_utils.ts";
 
 Deno.test({

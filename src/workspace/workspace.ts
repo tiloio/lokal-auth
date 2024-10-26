@@ -1,15 +1,15 @@
-import { WorkspaceKey } from "./key/workspace-key.ts";
-import { EventRepository } from "./data/event-repository.ts";
+import { WorkspaceKey } from "./workspace-key.ts";
+import { EventRepository } from "./events/event-repository.ts";
 import type {
   DecryptedEventData,
   EncryptedEvent,
   Event,
   NewEvent,
-} from "./data/types.ts";
-import { EventPath } from "./event-path.ts";
-import { EncodingService } from "./encoding-service.ts";
-import type { EventRepositoryAdapter } from "./data/adapters/event-adapter.types.ts";
-import type { EncodingAdapter } from "./data/adapters/encoding-adapter.types.ts";
+} from "./events/types.ts";
+import { EventPath } from "./events/event-path.ts";
+import { EncodingService } from "./encoding/encoding-service.ts";
+import type { EventRepositoryAdapter } from "./events/adapters/event-adapter.types.ts";
+import type { EncodingAdapter } from "./encoding/adapters/encoding-adapter.types.ts";
 
 export class Workspace {
   constructor(

@@ -1,5 +1,5 @@
-import type { EncryptedEvent } from "../../types.ts";
-import type { EventRepositoryAdapter } from "../event-adapter.types.ts";
+import type { EncryptedEvent } from "../types.ts";
+import type { EventRepositoryAdapter } from "./event-adapter.types.ts";
 import { equals } from "jsr:@std/bytes@1.0.2";
 
 export class InMemoryAdapter implements EventRepositoryAdapter {

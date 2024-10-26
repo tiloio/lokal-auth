@@ -1,4 +1,4 @@
-import { InMemoryAdapter } from "../adapters/events/in-memory-adapter.ts";
+import { InMemoryAdapter } from "../adapters/in-memory-adapter.ts";
 import { EventRepository } from "../event-repository.ts";
 import {
   assertEquals,
