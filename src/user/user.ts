@@ -1,25 +1,16 @@
-import { UserKey } from "../../mod.ts";
+import type { UserKey } from "../../mod.ts";
+import type { StoreAdapter } from "./store/adapters/store-adapter-types.ts";
 
 export class User {
   constructor(
     public readonly attributes: UserAttributes,
     public readonly key: UserKey,
+    public readonly store: StoreAdapter,
   ) {}
-
-  static async login(id: string, password: string): Promise<User> {
-    // where to get the salt?
-    const salt = new Uint8Array(32);
-
-    return new User({ id }, await UserKey.fromSaltedPassword(password, salt));
-  }
 }
 
 export type UserAttributes = {
   id: string;
-  name?: string;
+  username: string;
   email?: string;
 };
-
-function hashId(id: string) {
-  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(id));
-}

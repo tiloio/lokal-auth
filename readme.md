@@ -21,6 +21,13 @@ with the possibility to share data with other users.
   - [] add adapter and encoding to User class to be able to save and load
     workspaces
   - [] save and load workspaces to adapter
+- [] Event bus for events:
+  - [] user created,
+  - [] user edited,
+  - [] workspace created,
+  - [] workspace edited ??? do we need this?,
+  - [] workspace deleted,
+  - [] event created.
 - [] Create PathAssembler to assemble alle events under one path into the latest
   object
   - [] LATER: add performace optimizations with caching??? or assemble stop if
