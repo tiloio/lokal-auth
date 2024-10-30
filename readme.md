@@ -17,7 +17,7 @@ with the possibility to share data with other users.
 
 ## Todos
 
-- [] load user from session storage
+- [x] load user from local storage
   - [] add adapter and encoding to User class to be able to save and load
     workspaces
   - [] save and load workspaces to adapter
@@ -35,8 +35,9 @@ with the possibility to share data with other users.
     last event)??? -- we can cache the current state in the path like `car/1/#`
     is the current state of the `car/1`. This `/#` path is getting updated with
     every event.
-- [] create local storage adapters
-- [] create indexeddb adapters
+- [] create event local storage adapters
+- [] create event indexeddb adapters
+- [] create user store indexeddb adapters
 - [] LATER: maybe add caching of current event to the path???
 
 ## Known Issues
