@@ -14,7 +14,7 @@ export async function newWorkspace() {
   const eventRepository = new EventRepository(adapter);
   const userKey = await UserKey.new("test");
   const userId = "some user id";
-  const user = new User(userId, userKey);
+  const user = new User({ id: userId }, userKey);
   const workspaceKey = await WorkspaceKey.new();
   const workspaceId = "some workspace id";
   const workspaceName = "Some Workspace";
