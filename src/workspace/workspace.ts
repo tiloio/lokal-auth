@@ -29,6 +29,7 @@ export class Workspace {
                 crypto.randomUUID(),
                 options.name,
                 options.userPrivacyId,
+                new Date()
             ),
             await WorkspaceKey.new(),
             new EventRepository(adapters.repository),
@@ -45,6 +46,7 @@ export class Workspace {
                 options.id,
                 options.name,
                 options.userPrivacyId,
+                options.creationDate
             ),
             options.key,
             new EventRepository(adapters.repository),
@@ -154,6 +156,7 @@ export type NewWorkspaceOptions = {
 export type FromKeyWorkspaceOptions = {
     key: WorkspaceKey;
     id: string;
+    creationDate: Date; 
 } & NewWorkspaceOptions;
 
 export type WorkspaceAdapters = {

@@ -60,6 +60,7 @@ Deno.test({
             name: "workspace name",
             userPrivacyId: "user id",
             id: "workspace id",
+            creationDate: new Date(),   
         };
 
         const workspace = Workspace.fromKey(options, adapters);

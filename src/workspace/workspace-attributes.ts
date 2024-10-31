@@ -14,6 +14,7 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
         public readonly id: string,
         public readonly name: string,
         public readonly userPrivacyId: string,
+        public readonly creationDate: Date,
     ) {}
 
     static async fromEncryptedJSON(
@@ -60,10 +61,19 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
             throw error(attributes, "name", "string");
         }
 
+        if (
+            !("creationDate" in attributes) ||
+            (typeof attributes.creationDate !== "number" &&
+                typeof attributes.creationDate !== "bigint")
+        ) {
+            throw error(attributes, "creationDate", "number");
+        }
+
         return new WorkspaceAttributes(
             attributes.id,
             attributes.name,
             attributes.userPrivacyId,
+            new Date(Number(attributes.creationDate)),
         );
     }
 
@@ -72,6 +82,7 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
             id: this.id,
             name: this.name,
             userPrivacyId: this.userPrivacyId,
+            creationDate: this.creationDate.getTime(),
             _version: CURRENT_VERESION,
         };
 
@@ -96,5 +107,6 @@ type EncryptedWorkspaceAttributes = {
     id: string;
     name: string;
     userPrivacyId: string;
+    creationDate: number;
     _version: typeof CURRENT_VERESION;
 };

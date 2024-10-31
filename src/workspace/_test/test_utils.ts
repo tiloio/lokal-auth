@@ -34,6 +34,7 @@ export async function newWorkspace() {
             workspaceId,
             workspaceName,
             user.attributes.privacyId,
+            new Date(),
         ),
         workspaceKey,
         eventRepository,

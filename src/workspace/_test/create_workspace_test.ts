@@ -5,6 +5,34 @@ import { EncodingService } from "../encoding/encoding-service.ts";
 import { Workspace } from "../workspace.ts";
 import { assertNotEquals } from "@std/assert/not-equals";
 import { WorkspaceKey } from "../workspace-key.ts";
+import { assertLessOrEqual } from "@std/assert/less-or-equal";
+import { assertGreaterOrEqual } from "@std/assert/greater-or-equal";
+
+Deno.test({
+    name: "Workspace: Workspace.new() sets creation date",
+    async fn() {
+        const adapters = {
+            repository: new InMemoryAdapter(),
+            encoding: new CborAdapter(),
+        };
+        const options = {
+            name: "workspace name",
+            userPrivacyId: "user id",
+        };
+
+        const before = new Date();
+        const workspace = await Workspace.new(options, adapters);
+
+        assertLessOrEqual(
+            workspace.attributes.creationDate.getTime(),
+            new Date().getTime(),
+        );
+        assertGreaterOrEqual(
+            workspace.attributes.creationDate.getTime(),
+            before.getTime(),
+        );
+    },
+});
 
 Deno.test({
     name: "Workspace: Workspace.new() creates a new workspace",
@@ -60,6 +88,7 @@ Deno.test({
             name: "workspace name",
             userPrivacyId: "user id",
             id: "workspace id",
+            creationDate: new Date(),
         };
 
         const workspace = Workspace.fromKey(options, adapters);
@@ -89,5 +118,6 @@ Deno.test({
 
         assertEquals(currentEvent.workspace, options.id);
         assertEquals(decodedEvent.user, options.userPrivacyId);
+        assertEquals(workspace.attributes.creationDate, options.creationDate);
     },
 });
