@@ -1,7 +1,7 @@
 import type { CborType } from "jsr:@std/cbor@0.1.2/types";
 import { decodeCbor } from "jsr:@std/cbor@0.1.2/decode-cbor";
 import { encodeCbor } from "jsr:@std/cbor@0.1.2/encode-cbor";
-import type { EncodingAdapter } from "./encoding-adapter.types.ts";
+import type { EncodingAdapter } from "./event-encoding-adapter.types.ts";
 
 export class CborAdapter implements EncodingAdapter<{ [k: string]: CborType }> {
     encode<T extends { [k: string]: CborType }>(data: T): Uint8Array {

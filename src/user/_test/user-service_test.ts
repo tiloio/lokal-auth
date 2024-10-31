@@ -5,11 +5,16 @@ import { UserKey } from "../user-key.ts";
 import { assertRejects } from "@std/assert/rejects";
 import { LocalStorageAdapter } from "../store/adapters/local-storage-adapter.ts";
 import { CURRENT_VERESION } from "../user-attributes.ts";
+import { CborAdapter } from "../../workspace/encoding/adapters/cbor-adapter.ts";
+import { InMemoryAdapter } from "../../workspace/events/adapters/in-memory-adapter.ts";
 
 Deno.test("UserService: login new user with user username and password", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const username = "some username";
     const epxectedId = "ULoTKhd1B1/5xCBUWyaF+9BoU9dfPCYMFdK2VTUAtGE=";
@@ -23,7 +28,10 @@ Deno.test("UserService: login new user with user username and password", async (
 Deno.test("UserService: login old user with user username and password", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const username = "some username";
     const hashedUsername = "ULoTKhd1B1/5xCBUWyaF+9BoU9dfPCYMFdK2VTUAtGE=";
@@ -63,7 +71,10 @@ Deno.test("UserService: login old user with user username and password", async (
 Deno.test("UserService: login fails with wrong salt", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const username = "some username";
     const hashedUsername = "ULoTKhd1B1/5xCBUWyaF+9BoU9dfPCYMFdK2VTUAtGE=";
@@ -85,7 +96,10 @@ Deno.test("UserService: login fails with wrong salt", async () => {
 Deno.test("UserService: login fails with wrong password", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const username = "some username";
     const password = "some password";
@@ -98,7 +112,10 @@ Deno.test("UserService: login fails with wrong password", async () => {
 Deno.test("UserService: login fails if user attributes missing something", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const username = "some username";
     const hashedUsername = "ULoTKhd1B1/5xCBUWyaF+9BoU9dfPCYMFdK2VTUAtGE=";

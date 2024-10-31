@@ -1,21 +1,24 @@
-import type { UserKey } from "../../mod.ts";
 import { Workspace, type WorkspaceAdapters } from "../workspace/workspace.ts";
-import type { StoreAdapter } from "./store/adapters/store-adapter-types.ts";
+import type { UserStoreAdapter } from "./store/adapters/user-store-adapter-types.ts";
 import type { UserAttributes } from "./user-attributes.ts";
+import type { UserKey } from "./user-key.ts";
 
 export class User {
     constructor(
         public readonly attributes: UserAttributes,
         public readonly key: UserKey,
-        public readonly store: StoreAdapter,
+        public readonly store: UserStoreAdapter,
+        public readonly workspaceAdapters: WorkspaceAdapters,
         private readonly workspaces: Workspace[] = [],
     ) {}
 
-    async newWorkspace(attributes: NewWorkspaceAttributes): Promise<Workspace> {
+    async createWorkspace(
+        attributes: CreateWorkspaceAttributes,
+    ): Promise<Workspace> {
         const workspace = await Workspace.new({
             userPrivacyId: this.attributes.privacyId,
             name: attributes.name,
-        }, attributes.adapters);
+        }, this.workspaceAdapters);
 
         this.workspaces.push(workspace);
         await this.save();
@@ -47,7 +50,6 @@ export class User {
     }
 }
 
-export type NewWorkspaceAttributes = {
+export type CreateWorkspaceAttributes = {
     name: string;
-    adapters: WorkspaceAdapters;
 };

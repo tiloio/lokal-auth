@@ -9,7 +9,7 @@ import type {
 import { EventPath } from "./events/event-path.ts";
 import { EncodingService } from "./encoding/encoding-service.ts";
 import type { EventRepositoryAdapter } from "./events/adapters/event-adapter.types.ts";
-import type { EncodingAdapter } from "./encoding/adapters/encoding-adapter.types.ts";
+import type { EncodingAdapter } from "./encoding/adapters/event-encoding-adapter.types.ts";
 import { WorkspaceAttributes } from "./workspace-attributes.ts";
 
 export class Workspace {

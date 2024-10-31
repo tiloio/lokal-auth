@@ -9,7 +9,10 @@ import { WorkspaceAttributes } from "../../workspace/workspace-attributes.ts";
 Deno.test("User.newWorkspace: creates a new workspace", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const user = await userService.login("some user", "some password");
 
@@ -21,7 +24,7 @@ Deno.test("User.newWorkspace: creates a new workspace", async () => {
         },
     };
 
-    const workspace = await user.newWorkspace(expectedAttributes);
+    const workspace = await user.createWorkspace(expectedAttributes);
 
     assertEquals(workspace.attributes.name, expectedAttributes.name);
     assertEquals(workspace.attributes.userPrivacyId, user.attributes.privacyId);
@@ -38,7 +41,10 @@ Deno.test("User.newWorkspace: creates a new workspace", async () => {
 Deno.test("User.newWorkspace: saves the new workspace in the store", async () => {
     localStorage.clear();
     const adapter = new LocalStorageAdapter();
-    const userService = new UserService(adapter);
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
 
     const user = await userService.login("some user", "some password");
 
@@ -50,7 +56,7 @@ Deno.test("User.newWorkspace: saves the new workspace in the store", async () =>
         },
     };
 
-    const workspace = await user.newWorkspace(expectedAttributes);
+    const workspace = await user.createWorkspace(expectedAttributes);
 
     const loadedUser = await adapter.loadUser(user.attributes.id);
 

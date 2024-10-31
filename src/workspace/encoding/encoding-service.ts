@@ -1,4 +1,4 @@
-import type { EncodingAdapter } from "./adapters/encoding-adapter.types.ts";
+import type { EncodingAdapter } from "./adapters/event-encoding-adapter.types.ts";
 import type { DecryptedEventData } from "../events/types.ts";
 
 export class EncodingService {

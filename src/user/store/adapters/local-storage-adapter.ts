@@ -2,9 +2,9 @@
 
 import { decodeBase64, encodeBase64 } from "jsr:@std/encoding/base64";
 import type { StoredUser } from "../../user.types.ts";
-import type { StoreAdapter } from "./store-adapter-types.ts";
+import type { UserStoreAdapter } from "./user-store-adapter-types.ts";
 
-export class LocalStorageAdapter implements StoreAdapter {
+export class LocalStorageAdapter implements UserStoreAdapter {
     async loadUser(userId: string): Promise<StoredUser | undefined> {
         const user = localStorage.getItem(createKey(userId));
         if (!user) {

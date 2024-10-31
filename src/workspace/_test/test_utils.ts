@@ -21,6 +21,10 @@ export async function newWorkspace() {
         new UserAttributes("some user id", "privacy id", "some username"),
         userKey,
         userStore,
+        {
+            encoding: encoder,
+            repository: adapter,
+        },
     );
     const workspaceKey = await WorkspaceKey.new();
     const workspaceId = "some workspace id";

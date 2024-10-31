@@ -16,12 +16,15 @@ export class WorkspaceKey implements LokalAuthKey {
         public readonly options: WorkspaceKeyOptions,
     ) {}
 
-    static async new() {
+    static async new(): Promise<WorkspaceKey> {
         const { key, options } = await this.createKey();
         return new WorkspaceKey(key, options);
     }
 
-    static async fromJSON(userKey: UserKey, jwk: JsonEncryptedWorkspaceKey) {
+    static async fromJSON(
+        userKey: UserKey,
+        jwk: JsonEncryptedWorkspaceKey,
+    ): Promise<WorkspaceKey> {
         const key = await globalThis.crypto.subtle.unwrapKey(
             "jwk",
             decodeBase64(jwk.key),
@@ -63,7 +66,7 @@ export class WorkspaceKey implements LokalAuthKey {
         };
     }
 
-    async encrypt(dataToEncrypt: Uint8Array) {
+    async encrypt(dataToEncrypt: Uint8Array): Promise<Encrypted> {
         const iv = createIV();
 
         const encryptedData = await globalThis.crypto.subtle.encrypt(
@@ -78,7 +81,7 @@ export class WorkspaceKey implements LokalAuthKey {
         return { data: new Uint8Array(encryptedData), iv };
     }
 
-    async decrypt(encrypted: Encrypted) {
+    async decrypt(encrypted: Encrypted): Promise<Uint8Array> {
         const result = await crypto.subtle.decrypt(
             { name: this.options.key.algorithm, iv: encrypted.iv },
             this.key,

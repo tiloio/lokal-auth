@@ -1,1 +1,1 @@
-export * from "./src/user/user-key.ts";
+export * from "./src/lokal-auth.ts";
