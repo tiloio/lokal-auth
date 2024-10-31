@@ -15,7 +15,18 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
         public readonly name: string,
         public readonly userPrivacyId: string,
         public readonly creationDate: Date,
+        public readonly lastUpdateDate: Date,
     ) {}
+
+    newLastUpdate(date: Date): WorkspaceAttributes {
+        return new WorkspaceAttributes(
+            this.id,
+            this.name,
+            this.userPrivacyId,
+            this.creationDate,
+            date,
+        );
+    }
 
     static async fromEncryptedJSON(
         workspaceKey: WorkspaceKey,
@@ -69,11 +80,20 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
             throw error(attributes, "creationDate", "number");
         }
 
+        if (
+            !("lastUpdateDate" in attributes) ||
+            (typeof attributes.lastUpdateDate !== "number" &&
+                typeof attributes.lastUpdateDate !== "bigint")
+        ) {
+            throw error(attributes, "lastUpdateDate", "number");
+        }
+
         return new WorkspaceAttributes(
             attributes.id,
             attributes.name,
             attributes.userPrivacyId,
             new Date(Number(attributes.creationDate)),
+            new Date(Number(attributes.lastUpdateDate)),
         );
     }
 
@@ -83,6 +103,7 @@ export class WorkspaceAttributes implements WorkspaceAttributesData {
             name: this.name,
             userPrivacyId: this.userPrivacyId,
             creationDate: this.creationDate.getTime(),
+            lastUpdateDate: this.lastUpdateDate.getTime(),
             _version: CURRENT_VERESION,
         };
 
@@ -108,5 +129,6 @@ type EncryptedWorkspaceAttributes = {
     name: string;
     userPrivacyId: string;
     creationDate: number;
+    lastUpdateDate: number;
     _version: typeof CURRENT_VERESION;
 };

@@ -10,6 +10,29 @@ import {
 import type { DecryptedEventData } from "../events/types.ts";
 import { newWorkspace } from "./test_utils.ts";
 
+Deno.test.ignore({
+    name: "Workspace: saveEvent updates the workspace lastUpdateDate",
+    async fn() {
+        const { workspace } = await newWorkspace();
+
+        const before = new Date();
+        await workspace.saveEvent({
+            path: "test/test",
+            data: { test: "a" },
+        });
+        const after = new Date();
+
+        assertGreaterOrEqual(
+            workspace.attributes.lastUpdateDate.getTime(),
+            before.getTime(),
+        );
+        assertLessOrEqual(
+            workspace.attributes.lastUpdateDate.getTime(),
+            after.getTime(),
+        );
+    },
+});
+
 Deno.test({
     name: "Workspace: saveEvent returns the event",
     async fn() {

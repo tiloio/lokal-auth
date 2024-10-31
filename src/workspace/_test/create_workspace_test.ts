@@ -9,7 +9,7 @@ import { assertLessOrEqual } from "@std/assert/less-or-equal";
 import { assertGreaterOrEqual } from "@std/assert/greater-or-equal";
 
 Deno.test({
-    name: "Workspace: Workspace.new() sets creation date",
+    name: "Workspace: Workspace.new() sets creation and last update date",
     async fn() {
         const adapters = {
             repository: new InMemoryAdapter(),
@@ -29,6 +29,15 @@ Deno.test({
         );
         assertGreaterOrEqual(
             workspace.attributes.creationDate.getTime(),
+            before.getTime(),
+        );
+
+        assertLessOrEqual(
+            workspace.attributes.lastUpdateDate.getTime(),
+            new Date().getTime(),
+        );
+        assertGreaterOrEqual(
+            workspace.attributes.lastUpdateDate.getTime(),
             before.getTime(),
         );
     },
@@ -89,6 +98,7 @@ Deno.test({
             userPrivacyId: "user id",
             id: "workspace id",
             creationDate: new Date(),
+            lastUpdateDate: new Date(),
         };
 
         const workspace = Workspace.fromKey(options, adapters);

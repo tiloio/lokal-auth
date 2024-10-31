@@ -29,7 +29,8 @@ export class Workspace {
                 crypto.randomUUID(),
                 options.name,
                 options.userPrivacyId,
-                new Date()
+                new Date(),
+                new Date(),
             ),
             await WorkspaceKey.new(),
             new EventRepository(adapters.repository),
@@ -46,7 +47,8 @@ export class Workspace {
                 options.id,
                 options.name,
                 options.userPrivacyId,
-                options.creationDate
+                options.creationDate,
+                options.lastUpdateDate,
             ),
             options.key,
             new EventRepository(adapters.repository),
@@ -78,6 +80,10 @@ export class Workspace {
             event: encryptedEventData.data,
         } satisfies EncryptedEvent;
         this.eventRepository.saveEvent(encryptedEvent);
+
+        // TODO: solve this problem - we need to update the lastUpdateDate of the workspace and save the workspace in the user store - but the workspace instance has no access to the user instance.
+        // Maybe we should include this functions into the User instance - or we need to have a WorkspaceService which is responsible for this.
+        // this.attributes.lastUpdateDate = date;
 
         return {
             id: encryptedEvent.id,
@@ -156,7 +162,8 @@ export type NewWorkspaceOptions = {
 export type FromKeyWorkspaceOptions = {
     key: WorkspaceKey;
     id: string;
-    creationDate: Date; 
+    creationDate: Date;
+    lastUpdateDate: Date;
 } & NewWorkspaceOptions;
 
 export type WorkspaceAdapters = {
