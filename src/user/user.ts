@@ -18,6 +18,9 @@ export class User {
         const workspace = await Workspace.new({
             userPrivacyId: this.attributes.privacyId,
             name: attributes.name,
+            updateCallback: async () => {
+                await this.save();
+            },
         }, this.workspaceAdapters);
 
         this.workspaces.push(workspace);

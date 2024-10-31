@@ -3,14 +3,17 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.6",
     "jsr:@std/assert@1": "1.0.6",
+    "jsr:@std/async@^1.0.5": "1.0.7",
     "jsr:@std/bytes@*": "1.0.2",
     "jsr:@std/bytes@1.0.2": "1.0.2",
     "jsr:@std/bytes@^1.0.2": "1.0.2",
     "jsr:@std/cbor@*": "0.1.2",
     "jsr:@std/cbor@0.1.2": "0.1.2",
+    "jsr:@std/data-structures@^1.0.4": "1.0.4",
     "jsr:@std/encoding@*": "1.0.5",
     "jsr:@std/internal@^1.0.4": "1.0.4",
     "jsr:@std/streams@^1.0.7": "1.0.7",
+    "jsr:@std/testing@*": "1.0.3",
     "npm:fake-indexeddb@*": "6.0.0"
   },
   "jsr": {
@@ -19,6 +22,9 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
+    },
+    "@std/async@1.0.7": {
+      "integrity": "f4fadc0124432e37cba11e8b3880164661a664de00a65118d976848f32f96290"
     },
     "@std/bytes@1.0.2": {
       "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
@@ -30,6 +36,9 @@
         "jsr:@std/streams"
       ]
     },
+    "@std/data-structures@1.0.4": {
+      "integrity": "fa0e20c11eb9ba673417450915c750a0001405a784e2a4e0c3725031681684a0"
+    },
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
@@ -38,6 +47,13 @@
     },
     "@std/streams@1.0.7": {
       "integrity": "1a93917ca0c58c01b2bfb93647189229b1702677f169b6fb61ad6241cd2e499b"
+    },
+    "@std/testing@1.0.3": {
+      "integrity": "f98c2bee53860a5916727d7e7d3abe920dd6f9edace022e2d059f00d05c2cf42",
+      "dependencies": [
+        "jsr:@std/async",
+        "jsr:@std/data-structures"
+      ]
     }
   },
   "npm": {

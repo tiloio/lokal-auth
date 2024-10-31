@@ -12,13 +12,21 @@ import type { EventRepositoryAdapter } from "./events/adapters/event-adapter.typ
 import type { EncodingAdapter } from "./encoding/adapters/event-encoding-adapter.types.ts";
 import { WorkspaceAttributes } from "./workspace-attributes.ts";
 
+export type WorkspaceUpdateCallback = (workspace: Workspace) => Promise<void>;
+
 export class Workspace {
     constructor(
-        public readonly attributes: WorkspaceAttributes,
+        private _attributes: WorkspaceAttributes,
         public readonly key: WorkspaceKey,
         public readonly eventRepository: EventRepository,
         public readonly encodingService: EncodingService,
-    ) {}
+        private readonly updateCallbacks: WorkspaceUpdateCallback[] = [],
+    ) {
+    }
+
+    get attributes(): WorkspaceAttributes {
+        return this._attributes;
+    }
 
     static async new(
         options: NewWorkspaceOptions,
@@ -35,6 +43,7 @@ export class Workspace {
             await WorkspaceKey.new(),
             new EventRepository(adapters.repository),
             new EncodingService(adapters.encoding),
+            options.updateCallback ? [options.updateCallback] : [],
         );
     }
 
@@ -53,6 +62,7 @@ export class Workspace {
             options.key,
             new EventRepository(adapters.repository),
             new EncodingService(adapters.encoding),
+            options.updateCallback ? [options.updateCallback] : [],
         );
     }
 
@@ -81,9 +91,10 @@ export class Workspace {
         } satisfies EncryptedEvent;
         this.eventRepository.saveEvent(encryptedEvent);
 
-        // TODO: solve this problem - we need to update the lastUpdateDate of the workspace and save the workspace in the user store - but the workspace instance has no access to the user instance.
-        // Maybe we should include this functions into the User instance - or we need to have a WorkspaceService which is responsible for this.
-        // this.attributes.lastUpdateDate = date;
+        this._attributes = this.attributes.newLastUpdate(date);
+        await Promise.all(
+            this.updateCallbacks.map((callback) => callback(this)),
+        );
 
         return {
             id: encryptedEvent.id,
@@ -157,6 +168,7 @@ export class Workspace {
 export type NewWorkspaceOptions = {
     name: string;
     userPrivacyId: string;
+    updateCallback?: WorkspaceUpdateCallback;
 };
 
 export type FromKeyWorkspaceOptions = {

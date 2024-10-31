@@ -10,7 +10,7 @@ import {
 import type { DecryptedEventData } from "../events/types.ts";
 import { newWorkspace } from "./test_utils.ts";
 
-Deno.test.ignore({
+Deno.test({
     name: "Workspace: saveEvent updates the workspace lastUpdateDate",
     async fn() {
         const { workspace } = await newWorkspace();
