@@ -7,6 +7,8 @@ export interface WorkspaceAttributesData {
     readonly id: string;
     readonly name: string;
     readonly userPrivacyId: string;
+    readonly creationDate: Date;
+    readonly lastUpdateDate: Date;
 }
 
 export class WorkspaceAttributes implements WorkspaceAttributesData {
