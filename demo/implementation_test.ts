@@ -9,6 +9,7 @@ import { LocalStorageAdapter } from "../src/user/store/adapters/local-storage-ad
 import { InMemoryAdapter } from "../src/workspace/events/adapters/in-memory-adapter.ts";
 import { CborAdapter } from "../src/workspace/encoding/adapters/cbor-adapter.ts";
 import { assertEquals } from "@std/assert/equals";
+import type { User } from "../src/user/user.ts";
 
 Deno.test("intializeLokalAuth - creates a new instance and uses the provided adapters", async () => {
     const lokalAuth = initializeLokalAuth({
@@ -23,7 +24,7 @@ Deno.test("intializeLokalAuth - creates a new instance and uses the provided ada
         name: "test",
     });
 
-    assertInstanceOf(user.store, LocalStorageAdapter);
+    assertInstanceOf((user as User).store, LocalStorageAdapter);
     assertInstanceOf(workspace.eventRepository.adapter, InMemoryAdapter);
     assertInstanceOf(workspace.encodingService.adapter, CborAdapter);
 });

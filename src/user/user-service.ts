@@ -11,7 +11,10 @@ export class UserService {
         private readonly workspaceAdapters: WorkspaceAdapters,
     ) {}
 
-    async login(username: string, password: string): Promise<User> {
+    async login(
+        username: string,
+        password: string,
+    ): Promise<User> {
         const hashedId = await createNonPrivateId(username);
         const storedUser = await this.userStore.loadUser(hashedId);
 
