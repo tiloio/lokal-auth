@@ -7,6 +7,10 @@ import { LocalStorageAdapter } from "../store/adapters/local-storage-adapter.ts"
 import { CURRENT_VERESION } from "../user-attributes.ts";
 import { CborAdapter } from "../../workspace/encoding/adapters/cbor-adapter.ts";
 import { InMemoryAdapter } from "../../workspace/events/adapters/in-memory-adapter.ts";
+import { FakeTime } from "jsr:@std/testing/time";
+import { assertExists } from "@std/assert/exists";
+import { assertLessOrEqual } from "@std/assert/less-or-equal";
+import { assertGreaterOrEqual } from "@std/assert/greater-or-equal";
 
 Deno.test("UserService: login new user with user username and password", async () => {
     localStorage.clear();
@@ -65,6 +69,70 @@ Deno.test("UserService: login old user with user username and password", async (
     assertEquals(
         await user.key.decrypt(encryptedData),
         new TextEncoder().encode(someData),
+    );
+});
+
+Deno.test("UserService: login old user and load the workspaces with lastUpdateDate", async () => {
+    localStorage.clear();
+    using time = new FakeTime();
+    const adapter = new LocalStorageAdapter();
+    const userService = new UserService(adapter, {
+        encoding: new CborAdapter(),
+        repository: new InMemoryAdapter(),
+    });
+
+    const username = "some username";
+    const password = "some password";
+
+    const userOld = await userService.login(username, password);
+    const workspaceOld1 = await userOld.createWorkspace({
+        name: "some workspace1",
+    });
+    const workspaceOld2 = await userOld.createWorkspace({
+        name: "some workspace2",
+    });
+
+    time.tick(1000);
+    const beforeUpdateWorkspaceOld1 = new Date();
+    await workspaceOld1.saveEvent({
+        path: "test/test",
+        data: { test: "a" },
+    });
+    const afterUpdateWorkspaceOld1 = new Date();
+    time.tick(1000);
+
+    const user = await userService.login(username, password);
+
+    assertEquals(user.workspaces.length, 2);
+    const workspace1 = user.workspaces.find((workspace) =>
+        workspace.attributes.id === workspaceOld1.attributes.id
+    );
+    const workspace2 = user.workspaces.find((workspace) =>
+        workspace.attributes.id === workspaceOld2.attributes.id
+    );
+    assertExists(workspace1);
+    assertExists(workspace2);
+
+    assertEquals(
+        workspace1.attributes.creationDate.getTime(),
+        workspaceOld1.attributes.creationDate.getTime(),
+    );
+    assertEquals(
+        workspace2.attributes.creationDate.getTime(),
+        workspaceOld2.attributes.creationDate.getTime(),
+    );
+    assertEquals(
+        workspace2.attributes.lastUpdateDate.getTime(),
+        workspaceOld2.attributes.lastUpdateDate.getTime(),
+    );
+
+    assertLessOrEqual(
+        workspace1.attributes.lastUpdateDate.getTime(),
+        afterUpdateWorkspaceOld1.getTime(),
+    );
+    assertGreaterOrEqual(
+        workspace1.attributes.lastUpdateDate.getTime(),
+        beforeUpdateWorkspaceOld1.getTime(),
     );
 });
 

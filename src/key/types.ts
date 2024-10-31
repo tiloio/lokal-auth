@@ -13,12 +13,17 @@ export type DerivedKeyOptions = {
     };
 };
 
+export const WORKSPACE_KEY_OPTIONS_TYPE = "workspace";
+export const WORKSPACE_KEY_OPTIONS_VERSION = "001";
+export const WORKSPACE_KEY_OPTIONS_ALGORITHM = "AES-GCM";
+export const WORKSPACE_KEY_OPTIONS_LENGTH = 256;
+
 export type WorkspaceKeyOptions = {
-    type: "workspace";
-    version: "001";
+    type: typeof WORKSPACE_KEY_OPTIONS_TYPE;
+    version: typeof WORKSPACE_KEY_OPTIONS_VERSION;
     key: {
-        algorithm: "AES-GCM";
-        length: 256;
+        algorithm: typeof WORKSPACE_KEY_OPTIONS_ALGORITHM;
+        length: typeof WORKSPACE_KEY_OPTIONS_LENGTH;
     };
 };
 

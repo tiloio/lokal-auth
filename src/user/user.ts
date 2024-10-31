@@ -9,7 +9,7 @@ export class User {
         public readonly key: UserKey,
         public readonly store: UserStoreAdapter,
         public readonly workspaceAdapters: WorkspaceAdapters,
-        private readonly workspaces: Workspace[] = [],
+        public readonly workspaces: Workspace[] = [],
     ) {}
 
     async createWorkspace(
@@ -40,6 +40,7 @@ export class User {
                 this.workspaces.map(async (workspace) => {
                     return {
                         id: workspace.attributes.id,
+                        key: await workspace.key.toJSON(this.key),
                         encryptedAttributes: await workspace.attributes
                             .toEncryptedJson(
                                 workspace.key,

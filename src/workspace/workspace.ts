@@ -93,7 +93,7 @@ export class Workspace {
 
         this._attributes = this.attributes.newLastUpdate(date);
         await Promise.all(
-            this.updateCallbacks.map((callback) => callback(this)),
+            this.updateCallbacks.map(async (callback) => await callback(this)),
         );
 
         return {

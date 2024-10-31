@@ -1,4 +1,4 @@
-import type { Encrypted } from "../key/types.ts";
+import type { Encrypted, JsonEncryptedWorkspaceKey } from "../key/types.ts";
 
 export type StoredUser = {
     id: string;
@@ -9,5 +9,6 @@ export type StoredUser = {
 
 export type StoredWorkspace = {
     id: string;
+    key: JsonEncryptedWorkspaceKey;
     encryptedAttributes: Encrypted;
 };

@@ -3,7 +3,9 @@ import type { UserStoreAdapter } from "./store/adapters/user-store-adapter-types
 import { UserKey } from "./user-key.ts";
 import { User } from "./user.ts";
 import { UserAttributes } from "./user-attributes.ts";
-import type { WorkspaceAdapters } from "../workspace/workspace.ts";
+import { Workspace, type WorkspaceAdapters } from "../workspace/workspace.ts";
+import { WorkspaceAttributes } from "../workspace/workspace-attributes.ts";
+import { WorkspaceKey } from "../workspace/workspace-key.ts";
 
 export class UserService {
     constructor(
@@ -32,11 +34,36 @@ export class UserService {
             storedUser.encryptedAttributes,
         );
 
+        const workspaces = await Promise.all(
+            storedUser.workspaces.map(async (workspace) => {
+                const workspaceKey = await WorkspaceKey.fromJSON(
+                    userKey,
+                    workspace.key,
+                );
+                const attributes = await WorkspaceAttributes.fromEncryptedJSON(
+                    workspaceKey,
+                    workspace.encryptedAttributes,
+                );
+                return await Workspace.fromKey(
+                    {
+                        key: workspaceKey,
+                        id: workspace.id,
+                        name: attributes.name,
+                        userPrivacyId: attributes.userPrivacyId,
+                        creationDate: attributes.creationDate,
+                        lastUpdateDate: attributes.lastUpdateDate,
+                    },
+                    this.workspaceAdapters,
+                );
+            }),
+        );
+
         const user = new User(
             attributes,
             userKey,
             this.userStore,
             this.workspaceAdapters,
+            workspaces,
         );
 
         return user;

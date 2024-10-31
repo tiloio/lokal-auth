@@ -19,6 +19,18 @@ Deno.test("localStorageAdapter saveUser: stores user data into the local storage
         workspaces: [
             {
                 id: "some id",
+                key: {
+                    key: "some key",
+                    iv: "some iv",
+                    options: {
+                        type: "workspace",
+                        version: "001",
+                        key: {
+                            algorithm: "AES-GCM",
+                            length: 256,
+                        } as const,
+                    } as const,
+                },
                 encryptedAttributes: {
                     data: new Uint8Array([1, 120, 4]),
                     iv: new Uint8Array([1, 4, 5]),
@@ -34,7 +46,7 @@ Deno.test("localStorageAdapter saveUser: stores user data into the local storage
 
     assertEquals(
         resultUser,
-        '{"id":"some id","encryptedAttributes":{"data":"DXgE","iv":"DwQF"},"salt":"AWID","workspaces":[{"id":"some id","encryptedAttributes":{"data":"AXgE","iv":"AQQF"}}]}',
+        '{"id":"some id","encryptedAttributes":{"data":"DXgE","iv":"DwQF"},"salt":"AWID","workspaces":[{"id":"some id","key":{"key":"some key","iv":"some iv","options":{"type":"workspace","version":"001","key":{"algorithm":"AES-GCM","length":256}}},"encryptedAttributes":{"data":"AXgE","iv":"AQQF"}}]}',
     );
 });
 
@@ -52,6 +64,18 @@ Deno.test("localStorageAdapte loadUser: reads user data from the local storage s
         workspaces: [
             {
                 id: "some id",
+                key: {
+                    key: "some key",
+                    iv: "some iv",
+                    options: {
+                        type: "workspace",
+                        version: "001",
+                        key: {
+                            algorithm: "AES-GCM",
+                            length: 256,
+                        } as const,
+                    } as const,
+                },
                 encryptedAttributes: {
                     data: new Uint8Array([1, 120, 4]),
                     iv: new Uint8Array([1, 4, 5]),
@@ -62,7 +86,7 @@ Deno.test("localStorageAdapte loadUser: reads user data from the local storage s
 
     localStorage.setItem(
         `lokal-auth-user-${expectedUser.id}`,
-        '{"id":"some id","encryptedAttributes":{"data":"DXgE","iv":"DwQF"},"salt":"AWID","workspaces":[{"id":"some id","encryptedAttributes":{"data":"AXgE","iv":"AQQF"}}]}',
+        '{"id":"some id","encryptedAttributes":{"data":"DXgE","iv":"DwQF"},"salt":"AWID","workspaces":[{"id":"some id","key":{"key":"some key","iv":"some iv","options":{"type":"workspace","version":"001","key":{"algorithm":"AES-GCM","length":256}}},"encryptedAttributes":{"data":"AXgE","iv":"AQQF"}}]}',
     );
     const resultUser = await adapter.loadUser(expectedUser.id);
 
