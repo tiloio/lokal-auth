@@ -23,10 +23,19 @@ Deno.test("UserService: login new user with user username and password", async (
     const username = "some username";
     const epxectedId = "ULoTKhd1B1/5xCBUWyaF+9BoU9dfPCYMFdK2VTUAtGE=";
 
+    const before = new Date();
     const user = await userService.login(username, "some password");
 
     assertEquals(user.attributes.id, epxectedId);
     assertEquals(user.key.options.type, "user");
+    assertLessOrEqual(
+        user.attributes.creationDate.getTime(),
+        new Date().getTime(),
+    );
+    assertGreaterOrEqual(
+        user.attributes.creationDate.getTime(),
+        before.getTime(),
+    );
 });
 
 Deno.test("UserService: login old user with user username and password", async () => {
@@ -53,6 +62,7 @@ Deno.test("UserService: login old user with user username and password", async (
                     username,
                     privacyId: "some",
                     id: hashedUsername,
+                    creationDate: new Date().getTime(),
                     _version: CURRENT_VERESION,
                 }),
             ),

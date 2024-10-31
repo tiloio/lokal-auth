@@ -8,6 +8,7 @@ export class UserAttributes {
         public readonly id: string,
         public readonly privacyId: string,
         public readonly username: string,
+        public readonly creationDate: Date,
     ) {}
 
     static async fromEncryptedJSON(
@@ -54,10 +55,19 @@ export class UserAttributes {
             throw error(attributes, "username", "string");
         }
 
+        if (
+            !("creationDate" in attributes) ||
+            (typeof attributes.creationDate !== "number" &&
+                typeof attributes.creationDate !== "bigint")
+        ) {
+            throw error(attributes, "creationDate", "number");
+        }
+
         return new UserAttributes(
             attributes.id,
             attributes.privacyId,
             attributes.username,
+            new Date(Number(attributes.creationDate)),
         );
     }
 
@@ -66,6 +76,7 @@ export class UserAttributes {
             id: this.id,
             privacyId: this.privacyId,
             username: this.username,
+            creationDate: this.creationDate.getTime(),
             _version: CURRENT_VERESION,
         };
 
@@ -90,5 +101,6 @@ type EncryptedUserAttributes = {
     id: string;
     privacyId: string;
     username: string;
+    creationDate: number;
     _version: typeof CURRENT_VERESION;
 };

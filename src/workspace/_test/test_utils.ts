@@ -18,7 +18,12 @@ export async function newWorkspace() {
     const userKey = await UserKey.new("test");
     const userStore = new LocalStorageAdapter();
     const user = new User(
-        new UserAttributes("some user id", "privacy id", "some username"),
+        new UserAttributes(
+            "some user id",
+            "privacy id",
+            "some username",
+            new Date(),
+        ),
         userKey,
         userStore,
         {

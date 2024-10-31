@@ -80,6 +80,7 @@ export class UserService {
             hashedId,
             privacyId,
             username,
+            new Date(),
         );
 
         const user = new User(
