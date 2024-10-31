@@ -40,24 +40,22 @@ export class UserService {
         password: string,
     ) {
         const userKey = await UserKey.new(password);
+        const privacyId = crypto.randomUUID();
         const attributes = new UserAttributes(
             hashedId,
-            crypto.randomUUID(),
+            privacyId,
             username,
         );
 
-        await this.userStore.saveUser({
-            id: hashedId,
-            encryptedAttributes: await attributes.toEncryptedJson(userKey),
-            salt: userKey.salt,
-            workspaces: [],
-        });
-
-        return new User(
+        const user = new User(
             attributes,
             userKey,
             this.userStore,
         );
+
+        await user.save();
+
+        return user;
     }
 }
 

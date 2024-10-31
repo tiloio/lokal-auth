@@ -1,10 +1,10 @@
 import { assertEquals } from "@std/assert/equals";
 import { CborAdapter } from "../encoding/adapters/cbor-adapter.ts";
 import { InMemoryAdapter } from "../events/adapters/in-memory-adapter.ts";
-import { EncodingService } from "../encoding/encoding-service.ts";
 import { Workspace } from "../workspace.ts";
 import { assertNotEquals } from "@std/assert/not-equals";
 import { WorkspaceKey } from "../workspace-key.ts";
+import { EncodingService } from "../encoding/encoding-service.ts";
 
 Deno.test({
     name: "Workspace: Workspace.new() creates a new workspace",

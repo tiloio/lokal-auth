@@ -5,7 +5,7 @@ with the possibility to share data with other users.
 
 ## Goals of this project
 
-- [] end to end encryption
+- [x] end to end encryption
 - [] save data with adapters in the browser (local first)
 - [] first adapter should be indexeddb
 - [] provide a "changed" hook to save data to the server

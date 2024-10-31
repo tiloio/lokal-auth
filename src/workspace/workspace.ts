@@ -10,13 +10,14 @@ import { EventPath } from "./events/event-path.ts";
 import { EncodingService } from "./encoding/encoding-service.ts";
 import type { EventRepositoryAdapter } from "./events/adapters/event-adapter.types.ts";
 import type { EncodingAdapter } from "./encoding/adapters/encoding-adapter.types.ts";
+import { WorkspaceAttributes } from "./workspace-attributes.ts";
 
 export class Workspace {
     constructor(
         public readonly attributes: WorkspaceAttributes,
-        public readonly workspaceKey: WorkspaceKey,
-        private readonly eventRepository: EventRepository,
-        private readonly encodingService: EncodingService,
+        public readonly key: WorkspaceKey,
+        public readonly eventRepository: EventRepository,
+        public readonly encodingService: EncodingService,
     ) {}
 
     static async new(
@@ -24,11 +25,11 @@ export class Workspace {
         adapters: WorkspaceAdapters,
     ): Promise<Workspace> {
         return new Workspace(
-            {
-                name: options.name,
-                id: crypto.randomUUID(),
-                userId: options.userId,
-            },
+            new WorkspaceAttributes(
+                crypto.randomUUID(),
+                options.name,
+                options.userPrivacyId,
+            ),
             await WorkspaceKey.new(),
             new EventRepository(adapters.repository),
             new EncodingService(adapters.encoding),
@@ -40,11 +41,11 @@ export class Workspace {
         adapters: WorkspaceAdapters,
     ): Workspace {
         return new Workspace(
-            {
-                id: options.id,
-                name: options.name,
-                userId: options.userId,
-            },
+            new WorkspaceAttributes(
+                options.id,
+                options.name,
+                options.userPrivacyId,
+            ),
             options.key,
             new EventRepository(adapters.repository),
             new EncodingService(adapters.encoding),
@@ -57,12 +58,12 @@ export class Workspace {
         const eventData = {
             device: globalThis.navigator.userAgent,
             path: newEvent.path,
-            user: this.attributes.userId,
+            user: this.attributes.userPrivacyId,
             date: date.getTime(),
             data: newEvent.data,
         } satisfies DecryptedEventData<T>;
 
-        const encryptedEventData = await this.workspaceKey.encrypt(
+        const encryptedEventData = await this.key.encrypt(
             this.encodingService.encode(eventData),
         );
 
@@ -120,7 +121,7 @@ export class Workspace {
     private async decryptAndDecodeEvent<T>(
         encryptedEvent: EncryptedEvent,
     ): Promise<Event<T>> {
-        const decryptedEventData = await this.workspaceKey.decrypt({
+        const decryptedEventData = await this.key.decrypt({
             iv: encryptedEvent.iv,
             data: encryptedEvent.event,
         });
@@ -145,23 +146,17 @@ export class Workspace {
     }
 }
 
-export type WorkspaceAttributes = {
+export type NewWorkspaceOptions = {
     name: string;
-    id: string;
-    userId: string;
+    userPrivacyId: string;
 };
 
-type NewWorkspaceOptions = {
-    name: string;
-    userId: string;
-};
-
-type FromKeyWorkspaceOptions = {
+export type FromKeyWorkspaceOptions = {
     key: WorkspaceKey;
     id: string;
 } & NewWorkspaceOptions;
 
-type WorkspaceAdapters = {
+export type WorkspaceAdapters = {
     repository: EventRepositoryAdapter;
     encoding: EncodingAdapter;
 };

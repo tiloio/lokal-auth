@@ -145,7 +145,7 @@ Deno.test({
             device: globalThis.navigator.userAgent,
             path: newEvent.path,
             data: newEvent.data,
-            user: user.attributes.id,
+            user: user.attributes.privacyId,
         });
 
         assertEquals((event as any).data, undefined);
@@ -190,7 +190,7 @@ Deno.test({
         assertEquals(event.device, globalThis.navigator.userAgent);
         assertEquals(event.workspace, workspace.attributes.id);
         assertEquals(event.path, expectedEvent.path);
-        assertEquals(event.user, user.attributes.id);
+        assertEquals(event.user, user.attributes.privacyId);
 
         assertObjectMatch(event.data, expectedEvent.data);
     },

@@ -1,9 +1,9 @@
 import { assertEquals } from "@std/assert/equals";
 import { LocalStorageAdapter } from "../local-storage-adapter.ts";
 import type { StoredUser, StoredWorkspace } from "../../../user.types.ts";
-import type { WorkspaceAttributes } from "../../../../workspace/workspace.ts";
 import type { Encrypted } from "../../../../key/types.ts";
 import { assertRejects } from "@std/assert/rejects";
+import type { WorkspaceAttributesData } from "../../../../workspace/workspace-attributes.ts";
 
 Deno.test("localStorageAdapter saveUser: stores user data into the local storage stringified", async () => {
     localStorage.clear();
@@ -132,10 +132,10 @@ Deno.test("localStorageAdapter loadUser: fails if user or workspace object is mi
     }
 
     // Test for missing attributes sub-properties
-    const attributeProperties: (keyof WorkspaceAttributes)[] = [
+    const attributeProperties: (keyof WorkspaceAttributesData)[] = [
         "id",
         "name",
-        "userId",
+        "userPrivacyId",
     ];
     for (const prop of attributeProperties) {
         const wrongUser = JSON.parse(JSON.stringify(baseUser));

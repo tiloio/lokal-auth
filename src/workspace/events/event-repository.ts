@@ -2,11 +2,7 @@ import type { EncryptedEvent } from "./types.ts";
 import type { EventRepositoryAdapter } from "./adapters/event-adapter.types.ts";
 
 export class EventRepository {
-    private readonly adapter: EventRepositoryAdapter;
-
-    constructor(adapter: EventRepositoryAdapter) {
-        this.adapter = adapter;
-    }
+    constructor(public readonly adapter: EventRepositoryAdapter) {}
 
     async getWorkspaceEvents(workspace: string): Promise<EncryptedEvent[]> {
         return await this.adapter.getWorkspaceEvents(workspace);
