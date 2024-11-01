@@ -254,7 +254,9 @@ Deno.test({
             },
         ];
 
-        await Promise.all(newEvents.map((event) => workspace.saveEvent(event)));
+        for (const event of newEvents) {
+            await workspace.saveEvent(event);
+        }
         const events = await workspace.loadPathEvents(path);
 
         const expectedEvents = pathEvents.map((event) => {

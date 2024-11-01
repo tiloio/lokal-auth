@@ -3,7 +3,6 @@ import { UserService } from "../user-service.ts";
 import { createSalt } from "../../key/key-utils.ts";
 import { UserKey } from "../user-key.ts";
 import { assertRejects } from "@std/assert/rejects";
-import { LocalStorageAdapter } from "../store/adapters/local-storage-adapter.ts";
 import { CURRENT_VERESION } from "../user-attributes.ts";
 import { CborAdapter } from "../../workspace/encoding/adapters/cbor-adapter.ts";
 import { InMemoryAdapter } from "../../workspace/events/adapters/in-memory-adapter.ts";
@@ -11,10 +10,10 @@ import { FakeTime } from "jsr:@std/testing/time";
 import { assertExists } from "@std/assert/exists";
 import { assertLessOrEqual } from "@std/assert/less-or-equal";
 import { assertGreaterOrEqual } from "@std/assert/greater-or-equal";
+import { InMemoryUserStoreAdapter } from "../store/adapters/in-memory-user-store-adapter.ts";
 
 Deno.test("UserService: login new user with user username and password", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -39,8 +38,7 @@ Deno.test("UserService: login new user with user username and password", async (
 });
 
 Deno.test("UserService: login old user with user username and password", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -83,9 +81,8 @@ Deno.test("UserService: login old user with user username and password", async (
 });
 
 Deno.test("UserService: login old user and load the workspaces with lastUpdateDate", async () => {
-    localStorage.clear();
     using time = new FakeTime();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -147,8 +144,7 @@ Deno.test("UserService: login old user and load the workspaces with lastUpdateDa
 });
 
 Deno.test("UserService: login fails with wrong salt", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -172,8 +168,7 @@ Deno.test("UserService: login fails with wrong salt", async () => {
 });
 
 Deno.test("UserService: login fails with wrong password", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -188,8 +183,7 @@ Deno.test("UserService: login fails with wrong password", async () => {
 });
 
 Deno.test("UserService: login fails if user attributes missing something", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),

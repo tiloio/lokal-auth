@@ -1,4 +1,5 @@
 import { Workspace, type WorkspaceAdapters } from "../workspace/workspace.ts";
+import type { UserEventBus } from "./event-bus/user-event-bus.ts";
 import type { UserStoreAdapter } from "./store/adapters/user-store-adapter-types.ts";
 import type { UserAttributes } from "./user-attributes.ts";
 import type { UserKey } from "./user-key.ts";
@@ -8,6 +9,7 @@ export class User {
         public readonly attributes: UserAttributes,
         public readonly key: UserKey,
         public readonly store: UserStoreAdapter,
+        public readonly eventBus: UserEventBus,
         public readonly workspaceAdapters: WorkspaceAdapters,
         public readonly workspaces: Workspace[] = [],
     ) {}

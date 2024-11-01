@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.6",
     "jsr:@std/assert@1": "1.0.6",
+    "jsr:@std/assert@^1.0.6": "1.0.6",
     "jsr:@std/async@^1.0.5": "1.0.7",
     "jsr:@std/bytes@*": "1.0.2",
     "jsr:@std/bytes@1.0.2": "1.0.2",
@@ -51,6 +52,7 @@
     "@std/testing@1.0.3": {
       "integrity": "f98c2bee53860a5916727d7e7d3abe920dd6f9edace022e2d059f00d05c2cf42",
       "dependencies": [
+        "jsr:@std/assert@^1.0.6",
         "jsr:@std/async",
         "jsr:@std/data-structures"
       ]

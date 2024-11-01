@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert/equals";
 import { CborAdapter } from "../../workspace/encoding/adapters/cbor-adapter.ts";
 import { InMemoryAdapter } from "../../workspace/events/adapters/in-memory-adapter.ts";
-import { LocalStorageAdapter } from "../store/adapters/local-storage-adapter.ts";
 import { UserService } from "../user-service.ts";
 import {
     assertExists,
@@ -10,10 +9,10 @@ import {
 } from "@std/assert";
 import { WorkspaceAttributes } from "../../workspace/workspace-attributes.ts";
 import { FakeTime } from "jsr:@std/testing/time";
+import { InMemoryUserStoreAdapter } from "../store/adapters/in-memory-user-store-adapter.ts";
 
 Deno.test("User.newWorkspace: creates a new workspace", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -44,8 +43,7 @@ Deno.test("User.newWorkspace: creates a new workspace", async () => {
 });
 
 Deno.test("User.newWorkspace: saves the new workspace in the store", async () => {
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),
@@ -85,8 +83,7 @@ Deno.test("User.newWorkspace: saves the new workspace in the store", async () =>
 
 Deno.test("User.newWorkspace.saveEvent: saves the new lastUpdateDate in the store", async () => {
     using time = new FakeTime();
-    localStorage.clear();
-    const adapter = new LocalStorageAdapter();
+    const adapter = new InMemoryUserStoreAdapter();
     const userService = new UserService(adapter, {
         encoding: new CborAdapter(),
         repository: new InMemoryAdapter(),

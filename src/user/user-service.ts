@@ -6,6 +6,8 @@ import { UserAttributes } from "./user-attributes.ts";
 import { Workspace, type WorkspaceAdapters } from "../workspace/workspace.ts";
 import { WorkspaceAttributes } from "../workspace/workspace-attributes.ts";
 import { WorkspaceKey } from "../workspace/workspace-key.ts";
+import { UserEventBus } from "./event-bus/user-event-bus.ts";
+import { InMemoryEventBusAdapter } from "../event-bus/adapters/in-memory.event-bus-adapter.ts";
 
 export class UserService {
     constructor(
@@ -62,6 +64,7 @@ export class UserService {
             attributes,
             userKey,
             this.userStore,
+            new UserEventBus(new InMemoryEventBusAdapter()),
             this.workspaceAdapters,
             workspaces,
         );
@@ -87,6 +90,7 @@ export class UserService {
             attributes,
             userKey,
             this.userStore,
+            new UserEventBus(new InMemoryEventBusAdapter()),
             this.workspaceAdapters,
         );
 

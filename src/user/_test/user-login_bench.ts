@@ -1,15 +1,13 @@
 import { CborAdapter } from "../../workspace/encoding/adapters/cbor-adapter.ts";
 import { InMemoryAdapter } from "../../workspace/events/adapters/in-memory-adapter.ts";
-import { LocalStorageAdapter } from "../store/adapters/local-storage-adapter.ts";
+import { InMemoryUserStoreAdapter } from "../store/adapters/in-memory-user-store-adapter.ts";
 import { UserService } from "../user-service.ts";
 
 Deno.bench({
     name: "User Login: first login",
     fn: async (b) => {
-        localStorage.clear();
-
         b.start();
-        const userService = new UserService(new LocalStorageAdapter(), {
+        const userService = new UserService(new InMemoryUserStoreAdapter(), {
             encoding: new CborAdapter(),
             repository: new InMemoryAdapter(),
         });
@@ -21,8 +19,7 @@ Deno.bench({
 Deno.bench({
     name: "User Login: with stored user (second login)",
     fn: async (b) => {
-        localStorage.clear();
-        const userService = new UserService(new LocalStorageAdapter(), {
+        const userService = new UserService(new InMemoryUserStoreAdapter(), {
             encoding: new CborAdapter(),
             repository: new InMemoryAdapter(),
         });

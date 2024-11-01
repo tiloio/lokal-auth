@@ -18,9 +18,9 @@ with the possibility to share data with other users.
 ## Todos
 
 - [x] load user from local storage
-  - [] add adapter and encoding to User class to be able to save and load
-    workspaces
-  - [] save and load workspaces to adapter
+  - [x] add adapter ~~and encoding~~ to User class to be able to save and load
+        workspaces
+  - [x] save and load workspaces to adapter
 - [] Event bus for events:
   - [] user created,
   - [] user edited,

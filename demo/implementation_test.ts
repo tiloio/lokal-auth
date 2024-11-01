@@ -5,17 +5,16 @@ import {
     UserAdapters,
 } from "../adapters.ts";
 import { assertInstanceOf } from "@std/assert/instance-of";
-import { LocalStorageAdapter } from "../src/user/store/adapters/local-storage-adapter.ts";
 import { InMemoryAdapter } from "../src/workspace/events/adapters/in-memory-adapter.ts";
 import { CborAdapter } from "../src/workspace/encoding/adapters/cbor-adapter.ts";
 import { assertEquals } from "@std/assert/equals";
 import type { User } from "../src/user/user.ts";
 import { assertExists } from "@std/assert/exists";
+import { InMemoryUserStoreAdapter } from "../src/user/store/adapters/in-memory-user-store-adapter.ts";
 
 Deno.test("intializeLokalAuth - creates a new instance and uses the provided adapters", async () => {
-    localStorage.clear();
     const eventsAdapter = new EventAdapters.InMemory();
-    const userAdapter = new UserAdapters.LocalStorage();
+    const userAdapter = new UserAdapters.InMemory();
     const lokalAuth = initializeLokalAuth({
         eventsAdapter: eventsAdapter,
         userAdapter: userAdapter,
@@ -35,7 +34,7 @@ Deno.test("intializeLokalAuth - creates a new instance and uses the provided ada
         },
     });
 
-    assertInstanceOf((user as User).store, LocalStorageAdapter);
+    assertInstanceOf((user as User).store, InMemoryUserStoreAdapter);
     assertInstanceOf(workspace.eventRepository.adapter, InMemoryAdapter);
     assertInstanceOf(workspace.encodingService.adapter, CborAdapter);
 
@@ -46,10 +45,9 @@ Deno.test("intializeLokalAuth - creates a new instance and uses the provided ada
 });
 
 Deno.test("lokalAuth - can be used to create and read events for multiple workspaces", async () => {
-    localStorage.clear();
     const lokalAuth = initializeLokalAuth({
         eventsAdapter: new EventAdapters.InMemory(),
-        userAdapter: new UserAdapters.LocalStorage(),
+        userAdapter: new UserAdapters.InMemory(),
         eventsEncodingAdapter: new EventEncodingAdapters.BinaryCbor(),
     });
 
@@ -95,11 +93,11 @@ Deno.test("lokalAuth - can be used to create and read events for multiple worksp
 });
 
 Deno.test("lokalAuth.login restores all workspaces and events in the workspaces if the inMemoryAdapter is the same", async () => {
-    localStorage.clear();
-    const inMemoryAdapter = new EventAdapters.InMemory();
+    const inMemoryEventAdapter = new EventAdapters.InMemory();
+    const inMemoryUserAdapter = new UserAdapters.InMemory();
     const lokalAuthOld = initializeLokalAuth({
-        eventsAdapter: inMemoryAdapter,
-        userAdapter: new UserAdapters.LocalStorage(),
+        eventsAdapter: inMemoryEventAdapter,
+        userAdapter: inMemoryUserAdapter,
         eventsEncodingAdapter: new EventEncodingAdapters.BinaryCbor(),
     });
 
@@ -120,8 +118,8 @@ Deno.test("lokalAuth.login restores all workspaces and events in the workspaces 
     });
 
     const lokalAuth = initializeLokalAuth({
-        eventsAdapter: inMemoryAdapter,
-        userAdapter: new UserAdapters.LocalStorage(),
+        eventsAdapter: inMemoryEventAdapter,
+        userAdapter: inMemoryUserAdapter,
         eventsEncodingAdapter: new EventEncodingAdapters.BinaryCbor(),
     });
     const user = await lokalAuth.login("some-user", "some-password");
