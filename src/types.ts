@@ -1,8 +1,8 @@
-import type { UserStoreAdapter } from "./user/store/adapters/user-store-adapter-types.ts";
-import type { User } from "./user/user.ts";
-import type { EventEncodingAdapter } from "./workspace/adapters/encoding-adapter.types.ts";
-import type { EventRepositoryAdapter } from "./workspace/events/adapters/event-adapter.types.ts";
-import type { Workspace } from "./workspace/workspace.ts";
+import type { UserStoreAdapter } from "./user/store/adapters/user-store-adapter.types.ts";
+import type { User } from "./user/user.types.ts";
+import type { EventEncodingAdapter } from "./workspace/events/encoding/adapters/encoding-adapter.types.ts";
+import type { EventStoreAdapter } from "./workspace/events/store/adapters/event-adapter.types.ts";
+import type { Workspace } from "./workspace/workspace.type.ts";
 
 export type LokalAuth = {
     login(username: string, password: string): Promise<LokalAuthUser>;
@@ -10,15 +10,15 @@ export type LokalAuth = {
 
 export type LokalAuthUser = Omit<
     User,
-    "key" | "store" | "workspaceAdapters"
+    "store" | "workspaceAdapters"
 >;
 export type LokalAuthWorkspace = Omit<
     Workspace,
-    "key" | "encodingService" | "eventRepository"
+    "encodingService" | "eventRepository"
 >;
 
 export type LokalAuthOptions = {
-    eventsAdapter: EventRepositoryAdapter;
-    userAdapter: UserStoreAdapter;
-    eventsEncodingAdapter: EventEncodingAdapter;
+    eventStoreAdapter: EventStoreAdapter;
+    userStoreAdapter: UserStoreAdapter;
+    eventEncodingAdapter: EventEncodingAdapter;
 };

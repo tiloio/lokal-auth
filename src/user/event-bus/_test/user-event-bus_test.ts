@@ -1,5 +1,5 @@
 import { assertSpyCall, spy } from "jsr:@std/testing/mock";
-import { InMemoryEventBusAdapter } from "../../../event-bus/adapters/in-memory.event-bus-adapter.ts";
+import { InMemoryEventBusAdapter } from "../../../message-bus/adapters/in-memory.event-bus-adapter.ts";
 import { UserEventBus } from "../user-event-bus.ts";
 import type { StoredUser } from "../../user.types.ts";
 

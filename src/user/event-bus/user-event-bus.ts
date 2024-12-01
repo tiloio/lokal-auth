@@ -1,4 +1,4 @@
-import type { EventBusAdapter } from "../../event-bus/adapters/event-bus-adapter.types.ts";
+import type { EventBusAdapter } from "../../message-bus/adapters/EventBusAdapter.ts";
 import type { StoredUser } from "../user.types.ts";
 
 export class UserEventBus {

@@ -21,7 +21,7 @@ with the possibility to share data with other users.
   - [x] add adapter ~~and encoding~~ to User class to be able to save and load
         workspaces
   - [x] save and load workspaces to adapter
-- [] Event bus for events:
+- [] message bus for messages:
   - [] user created,
   - [] user edited,
   - [] workspace created,

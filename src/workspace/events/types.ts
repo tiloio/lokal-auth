@@ -9,7 +9,7 @@ export type Event<T> = {
     workspace: string; // the workspace id
 };
 
-export type NewEvent<T> = Omit<
+export type CreateEvent<T> = Omit<
     Event<T>,
     "id" | "version" | "user" | "date" | "device" | "workspace"
 >;

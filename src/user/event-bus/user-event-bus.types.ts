@@ -1,5 +1,5 @@
-import type { UserAttributes } from "../user-attributes.ts";
-import type { WorkspaceAttributes } from "../../workspace/workspace-attributes.ts";
+import type { Workspace } from "../../workspace/workspace.type.ts";
+import type { User } from "../user.types.ts";
 
 export type UserEventCallback = (
     data: UserEvent | WorkspaceEvent,
@@ -8,7 +8,7 @@ export type UserEventCallback = (
 export type UserEvent = {
     entity: "user";
     type: "created" | "updated" | "deleted";
-    data: UserAttributes;
+    data: User;
 };
 
 export type UserEventEntities = "user" | "workspace";
@@ -19,5 +19,5 @@ export type UserEventName = `${UserEventEntities}.${UserEventTypes}`;
 export type WorkspaceEvent = {
     entity: "workspace";
     type: "created" | "updated" | "deleted";
-    data: WorkspaceAttributes;
+    data: Workspace;
 };

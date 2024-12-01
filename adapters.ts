@@ -1,18 +1,25 @@
-import { InMemoryEventBusAdapter } from "./src/event-bus/adapters/in-memory.event-bus-adapter.ts";
+import { InMemoryEventBusAdapter } from "./src/message-bus/adapters/in-memory.event-bus-adapter.ts";
 import { InMemoryUserStoreAdapter } from "./src/user/store/adapters/in-memory-user-store-adapter.ts";
 import { LocalStorageAdapter } from "./src/user/store/adapters/local-storage-adapter.ts";
-import { CborAdapter } from "./src/workspace/encoding/adapters/cbor-adapter.ts";
-import { InMemoryAdapter } from "./src/workspace/events/adapters/in-memory-adapter.ts";
+import type { UserStoreAdapter } from "./src/user/store/adapters/user-store-adapter.types.ts";
+import type { EventEncodingAdapter } from "./src/workspace/events/encoding/adapters/encoding-adapter.types.ts";
+import { CborAdapter } from "./src/workspace/events/encoding/adapters/cbor-adapter.ts";
+import type { EventStoreAdapter } from "./src/workspace/events/store/adapters/event-adapter.types.ts";
+import { InMemoryEventStoreAdapter } from "./src/workspace/events/store/adapters/in-memory-event-store-adapter.ts";
 
-export const EventAdapters = {
-    InMemory: InMemoryAdapter,
+export const EventStoreAdapters: {
+    [k: string]: new () => EventStoreAdapter;
+} = {
+    InMemory: InMemoryEventStoreAdapter,
 };
 
-export const EventEncodingAdapters = {
+export const EventEncodingAdapters: {
+    [k: string]: new () => EventEncodingAdapter;
+} = {
     BinaryCbor: CborAdapter,
 };
 
-export const UserAdapters = {
+export const UserStoreAdapters: { [k: string]: new () => UserStoreAdapter } = {
     LocalStorage: LocalStorageAdapter,
     InMemory: InMemoryUserStoreAdapter,
 };

@@ -1,13 +1,13 @@
 import type { LokalAuth, LokalAuthOptions } from "./types.ts";
-import { UserService } from "./user/user-service.ts";
+import { UserKeyCommand } from "./user/key/user-key.command.ts";
+import { UserService } from "./user/service/service.user.ts";
+import { WorkspaceKeyCommand } from "./workspace/key/workspace-key.command.ts";
 
 export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
     const userService = new UserService(
-        options.userAdapter,
-        {
-            encoding: options.eventsEncodingAdapter,
-            repository: options.eventsAdapter,
-        },
+        options.userStoreAdapter,
+        new UserKeyCommand(),
+        new WorkspaceKeyCommand(),
     );
 
     return {

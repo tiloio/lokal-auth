@@ -48,7 +48,7 @@ export type NewLokalAuthKey = {
     cryptoKey: CryptoKey;
 };
 
-export type NewJsonLocalAuthKey = Omit<NewLokalAuthKey, "cryptoKey"> & {
+export type JsonLokalAuthKey = Omit<NewLokalAuthKey, "cryptoKey"> & {
     cryptoKey: JsonWebKey;
 };
 
@@ -59,7 +59,7 @@ export type LokalAuthSaltedKey = NewLokalAuthKey & {
 export type Base64Encoded = string;
 
 export type JsonLokalAuthSaltedKey =
-    & NewJsonLocalAuthKey
+    & JsonLokalAuthKey
     & Omit<LokalAuthSaltedKey, "salt" | "cryptoKey">
     & {
         salt: Base64Encoded;
@@ -75,12 +75,14 @@ export type LokalAuthKeyOptions = {
     };
 };
 
-export interface LokalAuthKey {
-    encrypt(data: Uint8Array): Promise<Encrypted>;
-    decrypt(data: Encrypted): Promise<Uint8Array>;
+export interface LokalAuthKeyCommand {
+    encrypt(key: NewLokalAuthKey, data: Uint8Array): Promise<Encrypted>;
+    decrypt(key: NewLokalAuthKey, data: Encrypted): Promise<Uint8Array>;
+    toJSON(key: NewLokalAuthKey): Promise<JsonLokalAuthKey>;
+    fromJSON(jsonKey: JsonLokalAuthKey): Promise<NewLokalAuthKey>;
 }
 
-export interface LokalAuthSaltedKeyService {
+export interface LokalAuthSaltedKeyCommand {
     encrypt(key: LokalAuthSaltedKey, data: Uint8Array): Promise<Encrypted>;
     decrypt(key: LokalAuthSaltedKey, data: Encrypted): Promise<Uint8Array>;
     toJSON(key: LokalAuthSaltedKey): Promise<JsonLokalAuthSaltedKey>;
