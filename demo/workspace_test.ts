@@ -3,7 +3,7 @@ import { initLokalAuth } from "./test.utils.ts";
 import { UserAttributesFromByteEncodedJSON } from "../src/user/attributes/attributes.user.ts";
 import { assertEquals } from "@std/assert/equals";
 
-Deno.test("intializeLokalAuth - provides a workspace namespace which can create a new workspace", async () => {
+Deno.test("intializeLokalAuth - provides createWorkspace which creates a new workspace", async () => {
     const { lokalAuth, adapter, keyCommands } = initLokalAuth();
 
     const user = await lokalAuth.login("some username", "some password");
@@ -23,7 +23,7 @@ Deno.test("intializeLokalAuth - provides a workspace namespace which can create 
     assertEquals(storedUserAttributes.workspaces, [workspace]);
 });
 
-Deno.test("intializeLokalAuth - provides a workspace namespace which can create multiple workspaces", async () => {
+Deno.test("intializeLokalAuth - provides createWorkspace which creates multiple workspaces", async () => {
     const { lokalAuth, adapter, keyCommands } = initLokalAuth();
 
     const user = await lokalAuth.login("some username", "some password");
@@ -49,7 +49,7 @@ Deno.test("intializeLokalAuth - provides a workspace namespace which can create 
     ]);
 });
 
-Deno.test("intializeLokalAuth - provides a workspace namespace which can create multiple workspaces for multiple users", async () => {
+Deno.test("intializeLokalAuth - provides createWorkspace which creates multiple workspaces for multiple users", async () => {
     const { lokalAuth, adapter, keyCommands } = initLokalAuth();
 
     const user1 = await lokalAuth.login("some username1", "some password1");
@@ -94,4 +94,43 @@ Deno.test("intializeLokalAuth - provides a workspace namespace which can create 
     );
     assertEquals(storedUserAttributes1.workspaces, [workspace1, workspace3]);
     assertEquals(storedUserAttributes2.workspaces, [workspace2, workspace4]);
+});
+
+Deno.test("intializeLokalAuth - login lists all workspaces for a user", async () => {
+    const { lokalAuth } = initLokalAuth();
+    const user1 = await lokalAuth.login("some username1", "some password1");
+    const user2 = await lokalAuth.login("some username2", "some password2");
+
+    const workspace1 = await lokalAuth.createWorkspace(
+        user1,
+        "some workspace1",
+    );
+    const workspace2 = await lokalAuth.createWorkspace(
+        user2,
+        "some workspace2",
+    );
+    const workspace3 = await lokalAuth.createWorkspace(
+        user1,
+        "some workspace3",
+    );
+    const workspace4 = await lokalAuth.createWorkspace(
+        user2,
+        "some workspace4",
+    );
+
+    const userWithWorkspaces1 = await lokalAuth.login(
+        "some username1",
+        "some password1",
+    );
+    const userWithWorkspaces2 = await lokalAuth.login(
+        "some username2",
+        "some password2",
+    );
+
+    assertEquals(userWithWorkspaces1.workspaces.length, 2);
+    assertEquals(userWithWorkspaces2.workspaces.length, 2);
+    assertEquals(userWithWorkspaces1.workspaces[0].id, workspace1.id);
+    assertEquals(userWithWorkspaces1.workspaces[1].id, workspace3.id);
+    assertEquals(userWithWorkspaces2.workspaces[0].id, workspace2.id);
+    assertEquals(userWithWorkspaces2.workspaces[1].id, workspace4.id);
 });
