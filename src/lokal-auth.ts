@@ -1,4 +1,4 @@
-import type { LokalAuth, LokalAuthOptions, LokalAuthUser } from "./types.ts";
+import type { LokalAuth, LokalAuthOptions } from "./types.ts";
 import { UserUpsertWorkspaceCommand } from "./user/command/upsert-workspace/user-upsert-workspace.command.ts";
 import { UserKeyCommand } from "./user/key/user-key.command.ts";
 import { UserService } from "./user/service/service.user.ts";
@@ -40,8 +40,11 @@ export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
         async login(username, password) {
             return await userService.login(username, password);
         },
-        async createWorkspace(user: LokalAuthUser, name: string) {
+        async createWorkspace(user, name) {
             return await workspaceService.newWorkspace(user, name);
+        },
+        async createEvent(workspace, newEvent) {
+            return await workspaceService.createEvent(workspace, newEvent);
         },
     };
 }
