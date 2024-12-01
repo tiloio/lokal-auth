@@ -5,7 +5,7 @@ import type { EncryptedEvent, Event } from "../../events/types.ts";
 import { EventPath } from "../../events/event-path.ts";
 import type { WorkspaceKeyCommand } from "../../key/workspace-key.command.ts";
 
-export class EventQueryCommand {
+export class ReadEventQuery {
     constructor(
         private readonly eventRepository: EventStore,
         private readonly encodingService: EventEncodingService,

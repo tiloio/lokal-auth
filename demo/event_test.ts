@@ -47,3 +47,76 @@ Deno.test("intializeLokalAuth - provides createEvent which creates a new event",
     assertGreaterOrEqual(decryptedEventData.date, dateBefore.getTime());
     assertLessOrEqual(decryptedEventData.date, Date.now());
 });
+
+Deno.test("intializeLokalAuth - provides listEvents which lists all event under a specific path sorted by date", async () => {
+    const { lokalAuth } = initLokalAuth();
+
+    const user = await lokalAuth.login("some username", "some password");
+    const workspace = await lokalAuth.createWorkspace(user, "some workspace");
+
+    const event1Data = { data: { event: 1 } };
+    const event2Data = { data: { event: 2 } };
+    const event3Data = { data: { event: 3 } };
+    const event4Data = { data: { event: 4 } };
+    const event5Data = { data: { event: 5 } };
+
+    const event1 = await lokalAuth.createEvent(workspace, {
+        path: "some/data",
+        data: event1Data,
+    });
+    const event2 = await lokalAuth.createEvent(workspace, {
+        path: "another/path",
+        data: event2Data,
+    });
+    const event3 = await lokalAuth.createEvent(workspace, {
+        path: "some/otherdata",
+        data: event3Data,
+    });
+    const event4 = await lokalAuth.createEvent(workspace, {
+        path: "some/data/subpath",
+        data: event4Data,
+    });
+    const event5 = await lokalAuth.createEvent(workspace, {
+        path: "some/data",
+        data: event5Data,
+    });
+
+    // create some other user, workspaces and events
+    const workspace2 = await lokalAuth.createWorkspace(user, "some workspace2");
+    await lokalAuth.createEvent(workspace2, {
+        path: "some/data",
+        data: "should not be listed",
+    });
+    const user2 = await lokalAuth.login("some username2", "some password2");
+    const workspace3 = await lokalAuth.createWorkspace(
+        user2,
+        "some workspace3",
+    );
+    await lokalAuth.createEvent(workspace3, {
+        path: "some/data",
+        data: "should not be listed",
+    });
+
+    const directPathEvents = await lokalAuth.listEvents(workspace, "some/data");
+    assertEquals(directPathEvents, [
+        event1,
+        event4,
+        event5,
+    ]);
+
+    const topPathEvents = await lokalAuth.listEvents(workspace, "some");
+    assertEquals(topPathEvents, [
+        event1,
+        event3,
+        event4,
+        event5,
+    ]);
+
+    const specificPathEvents = await lokalAuth.listEvents(
+        workspace,
+        "some/data/subpath",
+    );
+    assertEquals(specificPathEvents, [
+        event4,
+    ]);
+});

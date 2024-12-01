@@ -8,7 +8,7 @@ import { EventEncodingService } from "../../../events/encoding/event-encoding-se
 import { InMemoryEventStoreAdapter } from "../../../events/store/adapters/in-memory-event-store-adapter.ts";
 import { EventStore } from "../../../events/store/event-store.ts";
 import { WorkspaceKeyCommand } from "../../../key/workspace-key.command.ts";
-import { EventQueryCommand } from "../event-query.command.ts";
+import { ReadEventQuery } from "../read-event.query.ts";
 import { EventCreateCommand } from "../../../command/create-event/event-create.command.ts";
 
 async function newEventQueryCommand() {
@@ -17,7 +17,7 @@ async function newEventQueryCommand() {
     const encoder = new EventEncodingService(
         new EventEncodingAdapters.BinaryCbor(),
     );
-    const command = new EventQueryCommand(
+    const command = new ReadEventQuery(
         new EventStore(adapter),
         encoder,
         workspaceKeyCommand,

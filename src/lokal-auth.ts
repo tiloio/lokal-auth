@@ -7,6 +7,7 @@ import { WorkspaceCreateCommand } from "./workspace/command/create/workspace-cre
 import { EventEncodingService } from "./workspace/events/encoding/event-encoding-service.ts";
 import { EventStore } from "./workspace/events/store/event-store.ts";
 import { WorkspaceKeyCommand } from "./workspace/key/workspace-key.command.ts";
+import { ReadEventQuery } from "./workspace/query/read-event/read-event.query.ts";
 import { WorkspaceService } from "./workspace/service/service.workspace.ts";
 
 export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
@@ -20,6 +21,8 @@ export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
         keyCommands.workspace,
     );
 
+    const eventStore = new EventStore(options.eventStoreAdapter);
+    const eventEncodingService = new EventEncodingService(options.eventEncodingAdapter);
     const workspaceService = new WorkspaceService(
         new UserUpsertWorkspaceCommand(
             options.userStoreAdapter,
@@ -30,8 +33,13 @@ export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
             keyCommands.workspace,
         ),
         new EventCreateCommand(
-            new EventStore(options.eventStoreAdapter),
-            new EventEncodingService(options.eventEncodingAdapter),
+            eventStore,
+            eventEncodingService,
+            keyCommands.workspace,
+        ),
+        new ReadEventQuery(
+            eventStore,
+            eventEncodingService,
             keyCommands.workspace,
         ),
     );
@@ -45,6 +53,9 @@ export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
         },
         async createEvent(workspace, newEvent) {
             return await workspaceService.createEvent(workspace, newEvent);
+        },
+        async listEvents(workspace, path) {
+            return await workspaceService.listByPath(workspace, path);
         },
     };
 }

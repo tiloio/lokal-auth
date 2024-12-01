@@ -15,6 +15,10 @@ export type LokalAuth = {
         workspace: LokalAuthWorkspace,
         newEvent: CreateEvent<T>,
     ): Promise<Event<T>>;
+    listEvents(
+        workspace: LokalAuthWorkspace,
+        path: string,
+    ): Promise<Event<unknown>[]>;
 };
 
 export type LokalAuthUser = Omit<
