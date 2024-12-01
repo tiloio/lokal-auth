@@ -1,4 +1,4 @@
-import { encodeBase64 } from "jsr:@std/encoding/base64";
+import { encodeBase64 } from "jsr:@std/encoding@1.0.5/base64";
 import type { UserStoreAdapter } from "../store/adapters/user-store-adapter.types.ts";
 import type { User } from "../user.types.ts";
 import type { UserKeyCommand } from "../key/user-key.command.ts";
