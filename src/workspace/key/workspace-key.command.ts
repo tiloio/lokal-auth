@@ -54,6 +54,13 @@ export class WorkspaceKeyCommand implements LokalAuthKeyCommand {
         };
     }
 
+    async toJSON(key: NewLokalAuthKey): Promise<JsonLokalAuthKey> {
+        return {
+            cryptoKey: await crypto.subtle.exportKey("jwk", key.cryptoKey),
+            options: key.options,
+        };
+    }
+
     async encrypt(
         key: NewLokalAuthKey,
         dataToEncrypt: Uint8Array,
@@ -83,12 +90,5 @@ export class WorkspaceKeyCommand implements LokalAuthKeyCommand {
         );
 
         return new Uint8Array(result);
-    }
-
-    async toJSON(key: NewLokalAuthKey): Promise<JsonLokalAuthKey> {
-        return {
-            cryptoKey: await crypto.subtle.exportKey("jwk", key.cryptoKey),
-            options: key.options,
-        };
     }
 }

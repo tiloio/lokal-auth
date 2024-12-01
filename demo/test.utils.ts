@@ -9,6 +9,7 @@ import { UserKeyCommand } from "../src/user/key/user-key.command.ts";
 import type { UserStoreAdapter } from "../src/user/store/adapters/user-store-adapter.types.ts";
 import type { EventEncodingAdapter } from "../src/workspace/events/encoding/adapters/encoding-adapter.types.ts";
 import type { EventStoreAdapter } from "../src/workspace/events/store/adapters/event-adapter.types.ts";
+import { WorkspaceKeyCommand } from "../src/workspace/key/workspace-key.command.ts";
 
 export function initLokalAuth(): NewLokalAuthTestInit {
     const adapter = {
@@ -31,7 +32,7 @@ export function initLokalAuth(): NewLokalAuthTestInit {
         lokalAuth,
         keyCommands: {
             user: new UserKeyCommand(),
-            workspace: new UserKeyCommand(),
+            workspace: new WorkspaceKeyCommand(),
         },
     };
 }
@@ -49,6 +50,6 @@ export type NewLokalAuthTestInit = {
     };
     keyCommands: {
         user: UserKeyCommand;
-        workspace: UserKeyCommand;
+        workspace: WorkspaceKeyCommand;
     };
 };

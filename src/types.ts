@@ -6,6 +6,10 @@ import type { Workspace } from "./workspace/workspace.type.ts";
 
 export type LokalAuth = {
     login(username: string, password: string): Promise<LokalAuthUser>;
+    createWorkspace(
+        user: LokalAuthUser,
+        name: string,
+    ): Promise<LokalAuthWorkspace>;
 };
 
 export type LokalAuthUser = Omit<
