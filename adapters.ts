@@ -29,7 +29,7 @@ export const EventBusAdapters = {
     /**
      * @deprecated not implemented yet
      */
-    BroadcastChannel: () => {
+    BroadcastChannel: (): void => {
         throw new Error("not implemented yet");
     },
 };

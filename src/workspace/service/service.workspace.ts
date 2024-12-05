@@ -3,7 +3,7 @@ import type { User } from "../../user/user.types.ts";
 import type { EventCreateCommand } from "../command/create-event/event-create.command.ts";
 import type { WorkspaceCreateCommand } from "../command/create/workspace-create.command.ts";
 import type { CreateEvent, Event } from "../events/types.ts";
-import { ReadEventQuery } from "../query/read-event/read-event.query.ts";
+import type { ReadEventQuery } from "../query/read-event/read-event.query.ts";
 import type { Workspace } from "../workspace.type.ts";
 
 export class WorkspaceService {
@@ -11,7 +11,7 @@ export class WorkspaceService {
         private readonly userUpsertWorkspaceCommand: UserUpsertWorkspaceCommand,
         private readonly createWorkspace: WorkspaceCreateCommand,
         private readonly eventCreateCommand: EventCreateCommand,
-        private readonly readEventQuery: ReadEventQuery,    
+        private readonly readEventQuery: ReadEventQuery,
     ) {}
 
     async newWorkspace(user: User, name: string): Promise<Workspace> {
@@ -33,8 +33,11 @@ export class WorkspaceService {
     ): Promise<Event<T>> {
         return await this.eventCreateCommand.createEvent(workspace, newEvent);
     }
-    
-    async listByPath<T>(workspace: Workspace, path: string): Promise<Event<T>[]> {
+
+    async listByPath<T>(
+        workspace: Workspace,
+        path: string,
+    ): Promise<Event<T>[]> {
         return await this.readEventQuery.loadPathEvents(workspace, path);
-    }   
+    }
 }

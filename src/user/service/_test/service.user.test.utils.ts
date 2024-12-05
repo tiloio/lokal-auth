@@ -9,6 +9,7 @@ import { WorkspaceCreateCommand } from "../../../workspace/command/create/worksp
 import { EventEncodingService } from "../../../workspace/events/encoding/event-encoding-service.ts";
 import { EventStore } from "../../../workspace/events/store/event-store.ts";
 import { WorkspaceKeyCommand } from "../../../workspace/key/workspace-key.command.ts";
+import { ReadEventQuery } from "../../../workspace/query/read-event/read-event.query.ts";
 import { WorkspaceService } from "../../../workspace/service/service.workspace.ts";
 import type { EncryptedUserAttributes } from "../../attributes/attributes.user.types.ts";
 import { UserUpsertWorkspaceCommand } from "../../command/upsert-workspace/user-upsert-workspace.command.ts";
@@ -43,6 +44,11 @@ export function newUserService() {
         ),
         new WorkspaceCreateCommand(keys.workspace),
         new EventCreateCommand(
+            new EventStore(adapter.event.store),
+            new EventEncodingService(adapter.event.encoding),
+            keys.workspace,
+        ),
+        new ReadEventQuery(
             new EventStore(adapter.event.store),
             new EventEncodingService(adapter.event.encoding),
             keys.workspace,

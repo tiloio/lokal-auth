@@ -1,6 +1,6 @@
 //deno-lint-ignore-file require-await
 
-import { decodeBase64, encodeBase64 } from "jsr:@std/encoding/base64";
+import { decodeBase64, encodeBase64 } from "jsr:@std/encoding@1.0.5/base64";
 import type { StoredUser } from "../../user.types.ts";
 import type {
     NewStoredUser,

@@ -22,7 +22,9 @@ export function initializeLokalAuth(options: LokalAuthOptions): LokalAuth {
     );
 
     const eventStore = new EventStore(options.eventStoreAdapter);
-    const eventEncodingService = new EventEncodingService(options.eventEncodingAdapter);
+    const eventEncodingService = new EventEncodingService(
+        options.eventEncodingAdapter,
+    );
     const workspaceService = new WorkspaceService(
         new UserUpsertWorkspaceCommand(
             options.userStoreAdapter,

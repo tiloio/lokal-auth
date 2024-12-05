@@ -64,6 +64,7 @@ Deno.test("intializeLokalAuth - provides listEvents which lists all event under 
         path: "some/data",
         data: event1Data,
     });
+    // deno-lint-ignore no-unused-vars
     const event2 = await lokalAuth.createEvent(workspace, {
         path: "another/path",
         data: event2Data,

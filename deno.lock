@@ -12,6 +12,7 @@
     "jsr:@std/cbor@0.1.2": "0.1.2",
     "jsr:@std/data-structures@^1.0.4": "1.0.4",
     "jsr:@std/encoding@*": "1.0.5",
+    "jsr:@std/encoding@1.0.5": "1.0.5",
     "jsr:@std/internal@^1.0.4": "1.0.4",
     "jsr:@std/streams@^1.0.7": "1.0.7",
     "jsr:@std/testing@*": "1.0.3",
