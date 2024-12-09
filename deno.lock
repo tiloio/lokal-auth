@@ -16,7 +16,10 @@
     "jsr:@std/internal@^1.0.4": "1.0.4",
     "jsr:@std/streams@^1.0.7": "1.0.7",
     "jsr:@std/testing@*": "1.0.3",
-    "npm:fake-indexeddb@*": "6.0.0"
+    "npm:fake-indexeddb@*": "6.0.0",
+    "npm:id@*": "0.0.0",
+    "npm:idb@*": "8.0.0",
+    "npm:idb@8.0.0": "8.0.0"
   },
   "jsr": {
     "@std/assert@1.0.6": {
@@ -62,6 +65,12 @@
   "npm": {
     "fake-indexeddb@6.0.0": {
       "integrity": "sha512-YEboHE5VfopUclOck7LncgIqskAqnv4q0EWbYCaxKKjAvO93c+TJIaBuGy8CBFdbg9nKdpN3AuPRwVBJ4k7NrQ=="
+    },
+    "id@0.0.0": {
+      "integrity": "sha512-lnNquVqFEyVNQMAcsUJgcfnRed/A0Net/wYMqC+OtF2gz4BlqvxBY4YA+TcBJoYY2UsL0i71IBnGxl8m5J5FOw=="
+    },
+    "idb@8.0.0": {
+      "integrity": "sha512-l//qvlAKGmQO31Qn7xdzagVPPaHTxXx199MhrAFuVBTPqydcPYBWjkrbv4Y0ktB+GmWOiwHl237UUOrLmQxLvw=="
     }
   },
   "remote": {
@@ -74,6 +83,7 @@
     "https://deno.land/x/indexeddb@v1.1.0/lib/indexeddb_global.ts": "88269f2c9c97dbcb5641706bb17d14500eddb209da0fc8822ee4bbb5e57359f8",
     "https://deno.land/x/indexeddb@v1.1.0/lib/shim.ts": "1cc9b0961a2ddb9836643e1fc661cf44eb55a777cd7625cba4256d259920d51b",
     "https://deno.land/x/indexeddb@v1.1.0/polyfill_memory.ts": "83911d846564fe689356bd08054ccb994405b82d3167807f2129a7bb558f0498",
+    "https://deno.land/x/indexeddb@v1.1.0/ponyfill_memory.ts": "542c353eb1b938113b1c2111fdfe0e66857230372634f0767df7f4a938f67006",
     "https://deno.land/x/sqlite@v3.2.1/build/sqlite.js": "087db9bdacd1e5bb8b538ba328e5105571cc6d716deb9923e2eb5c8af763991a",
     "https://deno.land/x/sqlite@v3.2.1/build/vfs.js": "baff72655c0916c906327fe6703c6a47daa1346e55c2eaa2629bcd879a673c8d",
     "https://deno.land/x/sqlite@v3.2.1/mod.ts": "eb55ff3e103826ee735fa1a8ec2db6e96c8fec826faf198239c66a0fe635c4b6",

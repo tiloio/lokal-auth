@@ -1,6 +1,6 @@
 {
     "name": "@tilo/lokal-auth",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "exports": "./mod.ts",
     "tasks": {
         "dev": "deno test --check --watch --parallel",
