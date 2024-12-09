@@ -2,14 +2,7 @@
 
 import type { EncryptedEvent } from "../../types.ts";
 import type { EventStoreAdapter } from "./event-adapter.types.ts";
-import {
-    DBSchema,
-    deleteDB,
-    IDBPDatabase,
-    openDB,
-    unwrap,
-    wrap,
-} from "npm:idb@8.0.0";
+import { type DBSchema, type IDBPDatabase, openDB } from "npm:idb@8.0.0";
 
 export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
     private db: IDBPDatabase<LokalAuthEventsDB> | undefined;
@@ -102,12 +95,6 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
         );
         const store = tx.objectStore(IndexedDbEventStoreAdapter.STORE_NAME);
         return { tx, store, db };
-    }
-
-    async [Symbol.asyncDispose]() {
-        await this.close();
-
-        console.log("disposing");
     }
 }
 
