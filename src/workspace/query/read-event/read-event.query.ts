@@ -40,7 +40,7 @@ export class ReadEventQuery {
 
         const events = await Promise.all(
             encryptedEvents.map((encryptedEvent) => {
-                return this.decryptAndDecodeEvent(workspace, encryptedEvent);
+                return this.decryptAndDecodeEvent<T>(workspace, encryptedEvent);
             }),
         );
 
@@ -60,7 +60,9 @@ export class ReadEventQuery {
         );
 
         try {
-            const eventData = this.encodingService.decode(decryptedEventData);
+            const eventData = this.encodingService.decode<T>(
+                decryptedEventData,
+            );
 
             return {
                 id: encryptedEvent.id,

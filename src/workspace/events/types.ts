@@ -5,7 +5,7 @@ export type Event<T> = {
     user: string; // user id - but we do not have an id for the user, so we need a mapping which is saved in the client.
     date: Date;
     device: string; // the user agent which was used to create the event
-    data: Partial<T>;
+    data: T;
     workspace: string; // the workspace id
 };
 
@@ -28,5 +28,5 @@ export type DecryptedEventData<T> = {
     user: string; // user id - but we do not have an id for the user, so we need a mapping which is saved in the client.
     date: number;
     device: string; // the user agent which was used to create the event
-    data: Partial<T>;
+    data: T;
 };

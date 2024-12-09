@@ -35,3 +35,5 @@ export type LokalAuthOptions = {
     userStoreAdapter: UserStoreAdapter;
     eventEncodingAdapter: EventEncodingAdapter;
 };
+
+export type LokalAuthEvent<Data> = Event<Data>;

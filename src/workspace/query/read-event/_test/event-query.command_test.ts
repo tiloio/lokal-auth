@@ -74,7 +74,10 @@ Deno.test({
             workspace,
             expectedEvent,
         );
-        const event = await command.loadEvent(workspace, savedEvent.id);
+        const event = await command.loadEvent<typeof savedEvent>(
+            workspace,
+            savedEvent.id,
+        );
 
         assertGreaterOrEqual(event.date.getTime(), startTime.getTime());
         assertLessOrEqual(event.date.getTime(), new Date().getTime());
