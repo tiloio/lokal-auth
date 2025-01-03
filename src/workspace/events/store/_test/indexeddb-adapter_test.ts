@@ -2,7 +2,8 @@ import { IndexedDbEventStoreAdapter } from "../adapters/indexeddb-event-store-ad
 import { EventStore } from "../event-store.ts";
 import { assertEquals } from "jsr:@std/assert";
 // indexeddb polyfill
-import "https://deno.land/x/indexeddb@v1.1.0/polyfill_memory.ts";
+import "npm:fake-indexeddb@6.0.0/auto";
+import { EventPath } from "../../event-path.ts";
 
 function createTestObjects() {
     const adapter = new IndexedDbEventStoreAdapter();
@@ -47,3 +48,111 @@ Deno.test({
         assertEquals(events.length, 1);
     },
 });
+
+Deno.test({
+    name: "EventRepository: getPathEvents returns events for a specific path",
+    sanitizeResources: false,
+    sanitizeOps: false,
+    async fn() {
+        await using objects = await createTestObjects();
+        const { adapter, store } = objects;
+
+        const newEvent = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace1",
+        );
+        const newEvent2 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test2",
+            "workspace1",
+        );
+        const newEvent3 = await createTestEvent(
+            crypto.randomUUID(),
+            "test",
+            "workspace1",
+        );
+        const newEvent4 = await createTestEvent(
+            crypto.randomUUID(),
+            "best",
+            "workspace1",
+        );
+        const newEvent5 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test/nested",
+            "workspace1",
+        );
+        const newEvent6 = await createTestEvent(
+            crypto.randomUUID(),
+            "",
+            "workspace1",
+        );
+        const newEvent7 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test/",
+            "workspace1",
+        );
+        const newEvent8 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/",
+            "workspace1",
+        );
+        const newEvent9 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test/nested/deep",
+            "workspace1",
+        );
+        const newEvent10 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace2",
+        );
+
+        await Promise.all([
+            store.saveEvent(newEvent),
+            store.saveEvent(newEvent2),
+            store.saveEvent(newEvent3),
+            store.saveEvent(newEvent4),
+            store.saveEvent(newEvent5),
+            store.saveEvent(newEvent6),
+            store.saveEvent(newEvent7),
+            store.saveEvent(newEvent8),
+            store.saveEvent(newEvent9),
+            store.saveEvent(newEvent10),
+        ]);
+
+        const events = await adapter.getPathEvents(
+            newEvent.workspace,
+            await EventPath.hash("test/test"),
+        );
+
+        const sortedEvents = [...events].sort((a, b) =>
+            JSON.stringify(a).localeCompare(JSON.stringify(b))
+        );
+        const expectedEvents = [newEvent, newEvent5, newEvent7, newEvent9].sort(
+            (a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))
+        );
+
+        assertEquals(
+            sortedEvents.map((event) => event.path),
+            expectedEvents.map((event) => event.path),
+        );
+        assertEquals(sortedEvents, expectedEvents);
+    },
+});
+
+async function createTestEvent(id: string, path: string, workspace: string) {
+    return {
+        id,
+        path: path,
+        hashedPath: await EventPath.hash(path),
+        workspace: workspace,
+        user: "test",
+        data: {},
+        version: 0,
+        date: new Date(),
+        device: globalThis.navigator.userAgent,
+        iv: new Uint8Array(1),
+        event: new Uint8Array(3),
+    };
+}

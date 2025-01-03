@@ -32,7 +32,22 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
         workspace: string,
         hashedPath: Uint8Array[],
     ): Promise<EncryptedEvent[]> {
-        throw new Error("Not implemented");
+        const { tx, store } = await this.readStore();
+
+        const lowerBound = [workspace, hashedPath]; 
+        const upperBound = [workspace, [...hashedPath, new Uint8Array([255])]]; // Append high byte to include all continuations
+        let cursor = await store.openCursor(
+            IDBKeyRange.bound(lowerBound, upperBound, false, true),
+        );
+
+        const events: EncryptedEvent[] = [];
+        while (cursor) {
+            events.push(cursor.value);
+            cursor = await cursor.continue();
+        }
+
+        await tx.done;
+        return events; 
     }
 
     async saveEvent(event: EncryptedEvent): Promise<void> {
@@ -65,10 +80,9 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
                 const eventsStore = db.createObjectStore(
                     IndexedDbEventStoreAdapter.STORE_NAME,
                     {
-                        keyPath: "hashedPath",
+                        keyPath: ["workspace", "hashedPath"],
                     },
                 );
-                eventsStore.createIndex("by-workspace-id", "workspace");
                 eventsStore.createIndex("by-id", "id");
             },
         });

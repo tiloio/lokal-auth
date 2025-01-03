@@ -17,6 +17,7 @@
     "jsr:@std/streams@^1.0.7": "1.0.7",
     "jsr:@std/testing@*": "1.0.3",
     "npm:fake-indexeddb@*": "6.0.0",
+    "npm:fake-indexeddb@6.0.0": "6.0.0",
     "npm:id@*": "0.0.0",
     "npm:idb@*": "8.0.0",
     "npm:idb@8.0.0": "8.0.0"
