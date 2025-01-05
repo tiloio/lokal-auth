@@ -7,7 +7,7 @@ with the possibility to share data with other users.
 
 - [x] end to end encryption
 - [] save data with adapters in the browser (local first)
-- [] first adapter should be indexeddb
+- [x] first adapter should be indexeddb
 - [] provide a "changed" hook to save data to the server
 - [] provide a method to insert data which is loaded from the server
 - [] use an event driven approach to store the data
@@ -35,9 +35,10 @@ with the possibility to share data with other users.
     last event)??? -- we can cache the current state in the path like `car/1/#`
     is the current state of the `car/1`. This `/#` path is getting updated with
     every event.
-- [] create event local storage adapters
+- [x] create event local storage adapters
 - [] create event indexeddb adapters
 - [] create user store indexeddb adapters
+- [] create svelte abstraction layer // adapter
 - [] LATER: maybe add caching of current event to the path???
 
 ## Known Issues
