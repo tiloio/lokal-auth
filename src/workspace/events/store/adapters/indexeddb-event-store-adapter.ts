@@ -103,6 +103,9 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
                 );
                 eventsStore.createIndex("by-id", ["workspace", "id"]);
             },
+            terminated() {
+                this.initDB();
+            },
         });
         this.db = db;
 
