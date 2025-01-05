@@ -21,11 +21,29 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
         workspace: string,
         id: string,
     ): Promise<EncryptedEvent | undefined> {
-        throw new Error("Not implemented");
+        const { tx, store } = await this.readStore();
+        const event = await store.index('by-id').get([workspace, id]);
+        await tx.done;
+        return event;
     }
 
     async getWorkspaceEvents(workspace: string): Promise<EncryptedEvent[]> {
-        throw new Error("Not implemented");
+        const { tx, store } = await this.readStore();
+
+        const lowerBound = [workspace];
+        const upperBound = [workspace, [new Uint8Array([255])]];
+        let cursor = await store.openCursor(
+            IDBKeyRange.bound(lowerBound, upperBound, false, true),
+        );
+
+        const events: EncryptedEvent[] = [];
+        while (cursor) {
+            events.push(cursor.value);
+            cursor = await cursor.continue();
+        }
+
+        await tx.done;
+        return events;
     }
 
     async getPathEvents(
@@ -83,7 +101,7 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
                         keyPath: ["workspace", "hashedPath"],
                     },
                 );
-                eventsStore.createIndex("by-id", "id");
+                eventsStore.createIndex("by-id", ["workspace", "id"]);
             },
         });
         this.db = db;
@@ -116,6 +134,6 @@ interface LokalAuthEventsDB extends DBSchema {
     events: {
         key: Uint8Array[];
         value: EncryptedEvent;
-        indexes: { "by-workspace-id": string; "by-id": string };
+        indexes: { "by-id": string };
     };
 }

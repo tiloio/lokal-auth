@@ -3,9 +3,11 @@ import { EventStore } from "../event-store.ts";
 import { assertEquals } from "jsr:@std/assert";
 // indexeddb polyfill
 import "npm:fake-indexeddb@6.0.0/auto";
+import { IDBFactory } from "npm:fake-indexeddb@6.0.0";
 import { EventPath } from "../../event-path.ts";
 
 function createTestObjects() {
+    indexedDB = new IDBFactory();
     const adapter = new IndexedDbEventStoreAdapter();
     const store = new EventStore(new IndexedDbEventStoreAdapter());
     return {
@@ -130,7 +132,7 @@ Deno.test({
             JSON.stringify(a).localeCompare(JSON.stringify(b))
         );
         const expectedEvents = [newEvent, newEvent5, newEvent7, newEvent9].sort(
-            (a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))
+            (a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)),
         );
 
         assertEquals(
@@ -138,6 +140,86 @@ Deno.test({
             expectedEvents.map((event) => event.path),
         );
         assertEquals(sortedEvents, expectedEvents);
+    },
+});
+
+Deno.test({
+    name:
+        "EventRepository: getWorkspaceEvents returns all events for a specific workspace",
+    sanitizeResources: false,
+    sanitizeOps: false,
+    async fn() {
+        await using objects = await createTestObjects();
+        const { adapter, store } = objects;
+
+        const newEvent = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace1",
+        );
+
+        const newEvent2 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace2",
+        );
+
+        await Promise.all([
+            store.saveEvent(newEvent),
+            store.saveEvent(newEvent2),
+        ]);
+
+        const events = await adapter.getWorkspaceEvents("workspace1");
+
+        assertEquals(
+            events.map((event) => {
+                return { id: event.id, workspace: event.workspace };
+            }),
+            [
+                { id: newEvent.id, workspace: newEvent.workspace },
+            ],
+        );
+        assertEquals(events, [newEvent]);
+    },
+});
+
+Deno.test({
+    name:
+        "EventRepository: getWorkspaceEvent returns event for specific workspace and id",
+    sanitizeResources: false,
+    sanitizeOps: false,
+    async fn() {
+        await using objects = await createTestObjects();
+        const { adapter, store } = objects;
+
+        const eventId = crypto.randomUUID();
+        const newEvent = await createTestEvent(
+            eventId,
+            "test/test",
+            "workspace1",
+        );
+
+        const otherEvent = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace1",
+        );
+
+        const sameIdDifferentWorkspace = await createTestEvent(
+            eventId,
+            "different/path",
+            "workspace2",
+        );
+
+        await Promise.all([
+            store.saveEvent(newEvent),
+            store.saveEvent(otherEvent),
+            store.saveEvent(sameIdDifferentWorkspace),
+        ]);
+
+        const event = await adapter.getWorkspaceEvent("workspace1", eventId);
+
+        assertEquals(event, newEvent);
     },
 });
 
