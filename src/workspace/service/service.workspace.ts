@@ -38,6 +38,12 @@ export class WorkspaceService {
         workspace: Workspace,
         path: string,
     ): Promise<Event<T>[]> {
-        return await this.readEventQuery.loadPathEvents(workspace, path);
+        const events = await this.readEventQuery.loadPathEvents(
+            workspace,
+            path,
+        );
+        return events.sort((a, b) =>
+            a.date.getTime() - b.date.getTime()
+        ) as Event<T>[];
     }
 }

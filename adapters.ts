@@ -6,11 +6,13 @@ import type { EventEncodingAdapter } from "./src/workspace/events/encoding/adapt
 import { CborAdapter } from "./src/workspace/events/encoding/adapters/cbor-adapter.ts";
 import type { EventStoreAdapter } from "./src/workspace/events/store/adapters/event-adapter.types.ts";
 import { InMemoryEventStoreAdapter } from "./src/workspace/events/store/adapters/in-memory-event-store-adapter.ts";
+import { IndexedDbEventStoreAdapter } from "./src/workspace/events/store/adapters/indexeddb-event-store-adapter.ts";
 
 export const EventStoreAdapters: {
     [k: string]: new () => EventStoreAdapter;
 } = {
     InMemory: InMemoryEventStoreAdapter,
+    IndexedDB: IndexedDbEventStoreAdapter,
 };
 
 export const EventEncodingAdapters: {

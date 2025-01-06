@@ -1,13 +1,11 @@
 import { IndexedDbEventStoreAdapter } from "../adapters/indexeddb-event-store-adapter.ts";
 import { EventStore } from "../event-store.ts";
 import { assertEquals } from "jsr:@std/assert";
-// indexeddb polyfill
-import "npm:fake-indexeddb@6.0.0/auto";
-import { IDBFactory } from "npm:fake-indexeddb@6.0.0";
 import { EventPath } from "../../event-path.ts";
+import { testInitIndexedDB } from "./indexeddb-test-init.ts";
 
 function createTestObjects() {
-    indexedDB = new IDBFactory();
+    testInitIndexedDB();
     const adapter = new IndexedDbEventStoreAdapter();
     const store = new EventStore(new IndexedDbEventStoreAdapter());
     return {
@@ -130,8 +128,53 @@ Deno.test({
 
         const sortedEvents = [...events].sort((a, b) =>
             JSON.stringify(a).localeCompare(JSON.stringify(b))
-        );
+        ) as typeof newEvent[];
         const expectedEvents = [newEvent, newEvent5, newEvent7, newEvent9].sort(
+            (a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)),
+        );
+
+        assertEquals(
+            sortedEvents.map((event) => event.path),
+            expectedEvents.map((event) => event.path),
+        );
+        assertEquals(sortedEvents, expectedEvents);
+    },
+});
+
+Deno.test({
+    name:
+        "EventRepository: getPathEvents returns two same path events for a specific path",
+    sanitizeResources: false,
+    sanitizeOps: false,
+    async fn() {
+        await using objects = await createTestObjects();
+        const { adapter, store } = objects;
+
+        const newEvent1 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace1",
+        );
+        const newEvent2 = await createTestEvent(
+            crypto.randomUUID(),
+            "test/test",
+            "workspace1",
+        );
+
+        await Promise.all([
+            store.saveEvent(newEvent1),
+            store.saveEvent(newEvent2),
+        ]);
+
+        const events = await adapter.getPathEvents(
+            newEvent1.workspace,
+            await EventPath.hash("test/test"),
+        );
+
+        const sortedEvents = [...events].sort((a, b) =>
+            JSON.stringify(a).localeCompare(JSON.stringify(b))
+        ) as typeof newEvent1[];
+        const expectedEvents = [newEvent1, newEvent2].sort(
             (a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)),
         );
 

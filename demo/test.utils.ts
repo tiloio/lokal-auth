@@ -11,10 +11,12 @@ import type { EventEncodingAdapter } from "../src/workspace/events/encoding/adap
 import type { EventStoreAdapter } from "../src/workspace/events/store/adapters/event-adapter.types.ts";
 import { WorkspaceKeyCommand } from "../src/workspace/key/workspace-key.command.ts";
 
-export function initLokalAuth(): NewLokalAuthTestInit {
+export function initLokalAuth(
+    eventStoreAdapter: EventStoreAdapter = new EventStoreAdapters.InMemory(),
+): NewLokalAuthTestInit {
     const adapter = {
         event: {
-            store: new EventStoreAdapters.InMemory(),
+            store: eventStoreAdapter,
             encoding: new EventEncodingAdapters.BinaryCbor(),
         },
         user: {

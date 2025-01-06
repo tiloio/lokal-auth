@@ -44,7 +44,7 @@ export class EventCreateCommand {
             hashedPath: await EventPath.hash(newEvent.path),
             event: encryptedEventData.data,
         } satisfies EncryptedEvent;
-        this.eventStore.saveEvent(encryptedEvent);
+        await this.eventStore.saveEvent(encryptedEvent);
 
         return {
             id: encryptedEvent.id,

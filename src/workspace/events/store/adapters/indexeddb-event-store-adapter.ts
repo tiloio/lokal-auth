@@ -1,4 +1,18 @@
-//deno-lint-ignore-file require-await
+declare const IDBKeyRange: {
+    bound<L, U>(
+        lower: L,
+        upper: U,
+        lowerOpen?: boolean,
+        upperOpen?: boolean,
+    ): typeof IDBKeyRange;
+};
+
+interface IDBKeyRange<L, U> {
+    lower: L;
+    upper: U;
+    lowerOpen: boolean;
+    upperOpen: boolean;
+}
 
 import type { EncryptedEvent } from "../../types.ts";
 import type { EventStoreAdapter } from "./event-adapter.types.ts";
@@ -6,6 +20,7 @@ import { type DBSchema, type IDBPDatabase, openDB } from "npm:idb@8.0.0";
 
 export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
     private db: IDBPDatabase<LokalAuthEventsDB> | undefined;
+    private dbInitializer: Promise<IDBPDatabase<LokalAuthEventsDB>> | undefined;
     static readonly STORE_NAME = "events";
 
     constructor() {}
@@ -22,7 +37,7 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
         id: string,
     ): Promise<EncryptedEvent | undefined> {
         const { tx, store } = await this.readStore();
-        const event = await store.index('by-id').get([workspace, id]);
+        const event = await store.index("by-id").get([workspace, id]);
         await tx.done;
         return event;
     }
@@ -52,7 +67,7 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
     ): Promise<EncryptedEvent[]> {
         const { tx, store } = await this.readStore();
 
-        const lowerBound = [workspace, hashedPath]; 
+        const lowerBound = [workspace, hashedPath];
         const upperBound = [workspace, [...hashedPath, new Uint8Array([255])]]; // Append high byte to include all continuations
         let cursor = await store.openCursor(
             IDBKeyRange.bound(lowerBound, upperBound, false, true),
@@ -65,22 +80,24 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
         }
 
         await tx.done;
-        return events; 
+        return events;
     }
 
     async saveEvent(event: EncryptedEvent): Promise<void> {
         const { tx, store } = await this.writeStore();
-
         await store.put(event);
         await tx.done;
     }
 
     // TODO fix test leaks
     async close() {
-        if (!this.db) return;
-
-        this.db.close();
-        this.db = undefined;
+        if (this.db) {
+            this.db.close();
+            this.db = undefined;
+        }
+        this.dbInitializer = undefined;
+        // Give time for cleanup
+        await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
     get data() {
@@ -88,28 +105,34 @@ export class IndexedDbEventStoreAdapter implements EventStoreAdapter {
     }
 
     private async initDB() {
+        if (this.dbInitializer) {
+            return await this.dbInitializer;
+        }
+
         if (this.db) {
             return this.db;
         }
 
         // TODO: implement blocking, blocked, terminated, etc. (https://github.com/jakearchibald/idb)
-        const db = await openDB<LokalAuthEventsDB>("lokal-auth-events", 1, {
-            upgrade(db) {
-                const eventsStore = db.createObjectStore(
-                    IndexedDbEventStoreAdapter.STORE_NAME,
-                    {
-                        keyPath: ["workspace", "hashedPath"],
-                    },
-                );
-                eventsStore.createIndex("by-id", ["workspace", "id"]);
+        this.dbInitializer = openDB<LokalAuthEventsDB>(
+            "lokal-auth-events",
+            1,
+            {
+                upgrade(db) {
+                    const eventsStore = db.createObjectStore(
+                        IndexedDbEventStoreAdapter.STORE_NAME,
+                        {
+                            keyPath: ["workspace", "hashedPath", "id"],
+                        },
+                    );
+                    eventsStore.createIndex("by-id", ["workspace", "id"]);
+                },
             },
-            terminated() {
-                this.initDB();
-            },
-        });
-        this.db = db;
+        );
+        this.db = await this.dbInitializer;
+        this.dbInitializer = undefined;
 
-        return db;
+        return this.db;
     }
 
     private async readStore() {
