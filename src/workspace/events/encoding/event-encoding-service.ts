@@ -1,14 +1,14 @@
-import type { DecryptedEventData } from "../types.ts";
+import type { DecryptedEventData, EventData } from "../types.ts";
 import type { EventEncodingAdapter } from "./adapters/encoding-adapter.types.ts";
 
 export class EventEncodingService {
     constructor(public readonly adapter: EventEncodingAdapter) {}
 
-    encode<T>(data: DecryptedEventData<T>): Uint8Array {
+    encode<T extends EventData>(data: DecryptedEventData<T>): Uint8Array {
         return this.adapter.encode(data);
     }
 
-    decode<T>(data: Uint8Array): DecryptedEventData<T> {
+    decode<T extends EventData>(data: Uint8Array): DecryptedEventData<T> {
         const eventData = this.adapter.decode(
             data,
         );

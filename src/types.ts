@@ -2,7 +2,11 @@ import type { UserStoreAdapter } from "./user/store/adapters/user-store-adapter.
 import type { User } from "./user/user.types.ts";
 import type { EventEncodingAdapter } from "./workspace/events/encoding/adapters/encoding-adapter.types.ts";
 import type { EventStoreAdapter } from "./workspace/events/store/adapters/event-adapter.types.ts";
-import type { CreateEvent, Event } from "./workspace/events/types.ts";
+import type {
+    CreateEvent,
+    Event,
+    EventData,
+} from "./workspace/events/types.ts";
 import type { Workspace } from "./workspace/workspace.type.ts";
 
 export type LokalAuth = {
@@ -11,14 +15,14 @@ export type LokalAuth = {
         user: LokalAuthUser,
         name: string,
     ): Promise<LokalAuthWorkspace>;
-    createEvent<T>(
+    createEvent<T extends EventData>(
         workspace: LokalAuthWorkspace,
         newEvent: CreateEvent<T>,
     ): Promise<Event<T>>;
     listEvents(
         workspace: LokalAuthWorkspace,
         path: string,
-    ): Promise<Event<unknown>[]>;
+    ): Promise<Event<EventData>[]>;
 };
 
 export type LokalAuthUser = Omit<
@@ -36,4 +40,4 @@ export type LokalAuthOptions = {
     eventEncodingAdapter: EventEncodingAdapter;
 };
 
-export type LokalAuthEvent<Data> = Event<Data>;
+export type LokalAuthEvent<Data extends EventData> = Event<Data>;

@@ -62,6 +62,10 @@ the `Workspace`-Keys. The `Workspace` can be shared with other users.
 
 Maybe use @std/cbor to store the data.
 
+We use @std/cbor to store the data. With the IndexedDB adapter we test it with
+100_000 events. This needs 93,9 mb of storage. Which results in 939 bytes per
+event.
+
 ### Keys
 
 - UserKey

@@ -1,7 +1,7 @@
 import type { EventEncodingService } from "../../events/encoding/event-encoding-service.ts";
 import type { EventStore } from "../../events/store/event-store.ts";
 import type { Workspace } from "../../workspace.type.ts";
-import type { EncryptedEvent, Event } from "../../events/types.ts";
+import type { EncryptedEvent, Event, EventData } from "../../events/types.ts";
 import { EventPath } from "../../events/event-path.ts";
 import type { WorkspaceKeyCommand } from "../../key/workspace-key.command.ts";
 
@@ -12,7 +12,7 @@ export class ReadEventQuery {
         private readonly workspaceKeyCommand: WorkspaceKeyCommand,
     ) {}
 
-    async loadEvent<T>(
+    async loadEvent<T extends EventData>(
         workspace: Workspace,
         eventId: string,
     ): Promise<Event<T>> {
@@ -29,7 +29,7 @@ export class ReadEventQuery {
         return await this.decryptAndDecodeEvent(workspace, encryptedEvent);
     }
 
-    async loadPathEvents<T>(
+    async loadPathEvents<T extends EventData>(
         workspace: Workspace,
         path: string,
     ): Promise<Event<T>[]> {
@@ -47,7 +47,7 @@ export class ReadEventQuery {
         return events;
     }
 
-    private async decryptAndDecodeEvent<T>(
+    private async decryptAndDecodeEvent<T extends EventData>(
         workspace: Workspace,
         encryptedEvent: EncryptedEvent,
     ): Promise<Event<T>> {

@@ -6,6 +6,7 @@ import type {
     DecryptedEventData,
     EncryptedEvent,
     Event,
+    EventData,
 } from "../../events/types.ts";
 import type { WorkspaceKeyCommand } from "../../key/workspace-key.command.ts";
 import type { Workspace } from "../../workspace.type.ts";
@@ -17,7 +18,7 @@ export class EventCreateCommand {
         private readonly workspaceKeyCommand: WorkspaceKeyCommand,
     ) {}
 
-    async createEvent<T>(
+    async createEvent<T extends EventData>(
         workspace: Workspace,
         newEvent: CreateEvent<T>,
     ): Promise<Event<T>> {

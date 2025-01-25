@@ -1,4 +1,6 @@
-export type Event<T> = {
+export type EventData = Record<string | number | symbol, unknown>;
+
+export type Event<T extends EventData> = {
     path: string; // data paths are inspired by firebase, so if we want to store a car inside a house we would do something like that: "house/{houseId}/car/{carId}" - "house/4/car/5"
     id: string; // uuid v4
     version: number;
@@ -9,7 +11,7 @@ export type Event<T> = {
     workspace: string; // the workspace id
 };
 
-export type CreateEvent<T> = Omit<
+export type CreateEvent<T extends EventData> = Omit<
     Event<T>,
     "id" | "version" | "user" | "date" | "device" | "workspace"
 >;
@@ -23,7 +25,7 @@ export type EncryptedEvent = {
     iv: Uint8Array;
 };
 
-export type DecryptedEventData<T> = {
+export type DecryptedEventData<T extends EventData> = {
     path: string; // data paths are inspired by firebase, so if we want to store a car inside a house we would do something like that: "house/{houseId}/car/{carId}" - "house/4/car/5"
     user: string; // user id - but we do not have an id for the user, so we need a mapping which is saved in the client.
     date: number;

@@ -135,7 +135,7 @@ for (const [eventStoreAdapter, name] of eventStoreAdaptersToTest) {
             );
             await lokalAuth.createEvent(workspace2, {
                 path: "some/data",
-                data: "should not be listed",
+                data: { shouldNotBeListed: "should not be listed" },
             });
             const user2 = await lokalAuth.login(
                 "some username2",
@@ -147,7 +147,7 @@ for (const [eventStoreAdapter, name] of eventStoreAdaptersToTest) {
             );
             await lokalAuth.createEvent(workspace3, {
                 path: "some/data",
-                data: "should not be listed",
+                data: { shouldNotBeListed: "should not be listed" },
             });
 
             const directPathEvents = await lokalAuth.listEvents(

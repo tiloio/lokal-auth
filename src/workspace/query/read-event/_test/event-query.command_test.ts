@@ -10,6 +10,7 @@ import { EventStore } from "../../../events/store/event-store.ts";
 import { WorkspaceKeyCommand } from "../../../key/workspace-key.command.ts";
 import { ReadEventQuery } from "../read-event.query.ts";
 import { EventCreateCommand } from "../../../command/create-event/event-create.command.ts";
+import type { EventData } from "../../../events/types.ts";
 
 async function newEventQueryCommand() {
     const adapter = new InMemoryEventStoreAdapter();
@@ -103,30 +104,40 @@ Deno.test({
         const path = "car/1";
         const pathEvents = [{
             path,
-            data: "event1",
+            data: { event1: "event1" },
         }, {
             path,
-            data: "event2",
+            data: { event2: "event2" },
         }, {
             path,
-            data: "event3",
+            data: { event3: "event3" },
         }, {
             path,
-            data: "event4",
+            data: { event4: "event4" },
         }];
-        const newEvents = [
+        interface TestEventData extends EventData {
+            event1?: string;
+            event2?: string;
+            event3?: string;
+            event4?: string;
+            "not car 1 car/2"?: string;
+            "not car 1 car"?: string;
+            "not car 1 car/"?: string;
+        }
+
+        const newEvents: Array<{ path: string; data: TestEventData }> = [
             {
                 path: "car/2",
-                data: "not car 1 car/2",
+                data: { "not car 1 car/2": "not car 1 car/2" },
             },
             ...pathEvents,
             {
                 path: "car",
-                data: "not car 1 car",
+                data: { "not car 1 car": "not car 1 car" },
             },
             {
                 path: "car/",
-                data: "not car 1 car/",
+                data: { "not car 1 car/": "not car 1 car/" },
             },
         ];
 

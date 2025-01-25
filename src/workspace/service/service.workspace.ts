@@ -2,7 +2,7 @@ import type { UserUpsertWorkspaceCommand } from "../../user/command/upsert-works
 import type { User } from "../../user/user.types.ts";
 import type { EventCreateCommand } from "../command/create-event/event-create.command.ts";
 import type { WorkspaceCreateCommand } from "../command/create/workspace-create.command.ts";
-import type { CreateEvent, Event } from "../events/types.ts";
+import type { CreateEvent, Event, EventData } from "../events/types.ts";
 import type { ReadEventQuery } from "../query/read-event/read-event.query.ts";
 import type { Workspace } from "../workspace.type.ts";
 
@@ -27,14 +27,14 @@ export class WorkspaceService {
         return workspace;
     }
 
-    async createEvent<T>(
+    async createEvent<T extends EventData>(
         workspace: Workspace,
         newEvent: CreateEvent<T>,
     ): Promise<Event<T>> {
         return await this.eventCreateCommand.createEvent(workspace, newEvent);
     }
 
-    async listByPath<T>(
+    async listByPath<T extends EventData>(
         workspace: Workspace,
         path: string,
     ): Promise<Event<T>[]> {
