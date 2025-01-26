@@ -1,5 +1,5 @@
 import type { Event, EventData } from "../../workspace/events/types.ts";
-import { itemPipe } from "../item-pipe.ts";
+import { separateEventsByPath } from "../separate-events-by-path.ts";
 import { assertEquals } from "@std/assert/equals";
 
 type TestData = {
@@ -11,19 +11,19 @@ type TestData = {
     someUint8Array: Uint8Array;
 };
 
-Deno.test(`itemPipe - returns an event with only the newest string data property of all events`, () => {
+Deno.test(`separateEventsByPath - returns an event with only the newest string data property of all events`, () => {
     const events: Event<TestData>[] = [
         createEvent("/path", { someString: "someString1" }, new Date(1)),
         createEvent("/path", { someString: "someString3" }, new Date(3)),
         createEvent("/path", { someString: "someString2" }, new Date(2)),
     ];
 
-    const pipedEvent = itemPipe(events);
+    const separatedEvents = separateEventsByPath(events);
 
-    assertEquals(pipedEvent[0].data.someString, "someString3");
+    assertEquals(separatedEvents[0].data.someString, "someString3");
 });
 
-Deno.test(`itemPipe - returns an event which is merged with the newest data properties of all events`, () => {
+Deno.test(`separateEventsByPath - returns an event which is merged with the newest data properties of all events`, () => {
     const expectedData = {
         someString: "someString2",
         someNumber: 111,
@@ -35,12 +35,12 @@ Deno.test(`itemPipe - returns an event which is merged with the newest data prop
         createDataEvent("/path", { someNumber: 111 }, new Date(2)),
     ];
 
-    const pipedEvent = itemPipe(events);
+    const separatedEvents = separateEventsByPath(events);
 
-    assertEquals(pipedEvent[0].data, expectedData);
+    assertEquals(separatedEvents[0].data, expectedData);
 });
 
-Deno.test(`itemPipe - returns an event with only the newest data properties of all events`, () => {
+Deno.test(`separateEventsByPath - returns an event with only the newest data properties of all events`, () => {
     const expectedData = {
         someString: "3",
         someNumber: Math.random(),
@@ -82,58 +82,63 @@ Deno.test(`itemPipe - returns an event with only the newest data properties of a
         createEvent("path", expectedData, new Date(3)),
     ].sort((a, b) => a.data.someNumber - b.data.someNumber);
 
-    const pipedEvent = itemPipe(events);
+    const separatedEvents = separateEventsByPath(events);
 
-    assertEquals(pipedEvent[0].data, expectedData);
+    assertEquals(separatedEvents[0].data, expectedData);
 });
 
-Deno.test(`itemPipe - combines children elements like "/item" & "/item/1" & "/item/2"`, () => {
+Deno.test(`separateEventsByPath - combines children elements like "/item" & "/item/1" & "/item/2"`, () => {
     const expectedResult = [
         {
             path: "item",
-            data: { someString: "someString2"},
+            data: { someString: "someString2" },
+            events: [
+                createDataEvent(
+                    "/item",
+                    { someString: "someString1" },
+                    new Date(1),
+                ),
+                createDataEvent(
+                    "/item",
+                    { someString: "someString2" },
+                    new Date(3),
+                )
+            ]
         },
         {
             path: "item/1",
             data: { someString: "someString2Item1" },
+            events: [
+                createDataEvent(
+                    "/item/1",
+                    { someString: "someString1Item1" },
+                    new Date(2),
+                ),
+                createDataEvent(
+                    "/item/1",
+                    { someString: "someString2Item1" },
+                    new Date(3),
+                ),
+            ]
         },
         {
             path: "item/2",
             data: { someString: "someString1Item2" },
+            events: [
+                createDataEvent(
+                    "/item/2",
+                    { someString: "someString1Item2" },
+                    new Date(3),
+                ),
+            ]
         },
     ];
 
-    const events: Event<Partial<TestData>>[] = [
-        createDataEvent(
-            "/item",
-            { someString: "someString1" },
-            new Date(1),
-        ),
-        createDataEvent(
-            "/item/2",
-            { someString: "someString1Item2" },
-            new Date(3),
-        ),
-        createDataEvent(
-            "/item",
-            { someString: "someString2" },
-            new Date(3),
-        ),
-        createDataEvent(
-            "/item/1",
-            { someString: "someString2Item1" },
-            new Date(3),
-        ),
-        createDataEvent(
-            "/item/1",
-            { someString: "someString1Item1" },
-            new Date(2),
-        ),
-    ];
+    const events: Event<Partial<TestData>>[] = expectedResult.flatMap(result => result.events).sort((e1, e2) => e1.id.localeCompare(e2.id));
 
-    const pipedEvent = itemPipe(events);
+    const separatedEvents = separateEventsByPath(events);
 
-    assertEquals(pipedEvent, expectedResult);
+    assertEquals(separatedEvents, expectedResult);
 });
 
 function createEvent(
@@ -155,7 +160,7 @@ function createEvent(
             someUint8Array: new Uint8Array(10),
             ...data,
         },
-        id: "some-id",
+        id: Math.random() + "_id",
         version: 1,
         workspace: "some-workspace",
         path: path,
@@ -172,7 +177,7 @@ function createDataEvent<T extends EventData>(
 ): Event<T> {
     return {
         data: data,
-        id: "some-id",
+        id: Math.random() + "_id",
         version: 1,
         workspace: "some-workspace",
         path: path,

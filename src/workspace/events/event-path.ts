@@ -21,6 +21,11 @@ export class EventPath {
         }
         return splittedPath;
     }
+    static parentPath(path: string) {
+        const splittedPath = EventPath.split(path);
+        splittedPath.pop();
+        return splittedPath.join(EVENT_SEPERATOR);
+    }
     static isPath(pathA: string, pathB: string) {
         return EventPath.normalize(pathA) === EventPath.normalize(pathB);
     }
